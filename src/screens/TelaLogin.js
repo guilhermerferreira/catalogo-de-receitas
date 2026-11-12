@@ -8,13 +8,9 @@ export default function TelaLogin({ navigation }) {
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
-    const [erros, setErros] = useState({
-        email: '',
-        senha: ''
-    });
+    const [erros, setErros] = useState({ email: '', senha: '' });
     
-
-    function enviarFormulario() {
+    function enviarLogin() {
         const resultado = validarLogin(email, senha);
         setErros(resultado);
 
@@ -60,7 +56,7 @@ export default function TelaLogin({ navigation }) {
 
                 <TouchableOpacity 
                     style={styles.botao}
-                    onPress={() => enviarFormulario()}
+                    onPress={() => enviarLogin()}
                     activeOpacity={0.7}
                 >
                     <Text>Entrar</Text>
@@ -71,7 +67,7 @@ export default function TelaLogin({ navigation }) {
             <View style={styles.footer}>
                 <Text>
                     Não tem uma conta? 
-                    <Text style={styles.link} onPress={() => navigation.navigate('Home')} > Cadastre-se </Text>
+                    <Text style={styles.link} onPress={() => navigation.navigate('Cadastro')} > Crie sua conta! </Text>
                 </Text>
             </View>
         </View>
@@ -79,41 +75,44 @@ export default function TelaLogin({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF6E7',
-    alignItems: 'center',
-    justifyContent: 'space-between',    
-    padding: 24,
-  },
-  header: {
-    width: '100%',
-    alignSelf: 'flex-start',
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#0C343E'
-  },
-  subtitulo: {
-    fontSize: 11,
-    marginTop: 5,
-    color: '#0C343E'
-  },
-  formContainer: {
-    flex: 1,
-    width: '100%',
-    marginTop: 150
-  },
-  botao: {
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 80,
-    backgroundColor: '#FFBE31',
-    alignItems: 'center',
-    color: '#0C343E'
-  },
-  link: {
-    color: 'blue'
-  }
+    container: {
+        flex: 1,
+        backgroundColor: '#FFF6E7',
+        alignItems: 'center',
+        justifyContent: 'space-between',    
+        padding: 24,
+    },
+    header: {
+        width: '100%',
+        alignSelf: 'flex-start',
+    },
+    titulo: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#0C343E'
+    },
+    subtitulo: {
+        fontSize: 11,
+        marginTop: 5,
+        color: '#0C343E'
+    },
+    formContainer: {
+        flex: 1,
+        width: '100%',
+        marginTop: 150
+    },
+    botao: {
+        padding: 12,
+        borderRadius: 8,
+        marginTop: 80,
+        backgroundColor: '#FFBE31',
+        alignItems: 'center',
+        color: '#0C343E'
+    },
+    footer: {
+        fontSize: 13
+    },
+    link: {
+        color: 'blue'
+    }
 });
