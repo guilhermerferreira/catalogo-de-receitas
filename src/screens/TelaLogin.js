@@ -1,21 +1,32 @@
-import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import  Input  from "../components/Input";
 import Label from "../components/Label";
+import { validarLogin } from "../validators/AuthValidator";
 import { useState } from "react";
 
 export default function TelaLogin({ navigation }) {
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [erros, setErros] = useState({
+        email: '',
+        senha: ''
+    });
+    
 
-    function validarformulario() {
-        if (!email || !senha) {
-            alert('Preencha os campos corretamente.');
-            return false;
+    function enviarFormulario() {
+        const resultado = validarLogin(email, senha);
+        setErros(resultado);
+
+        // compara se o valor do erro retornado é diferente de ''
+        const possuiErros = Object.values(resultado)
+            .some(erro => erro !== '');
+
+        if (possuiErros) {
+            return;
         }
 
-        alert('Formulario enviado com sucesso');
-        return true;
+        navigation.navigate('Home');
     }
 
     return (
@@ -35,20 +46,22 @@ export default function TelaLogin({ navigation }) {
                     onChangeText={setEmail}
                     placeholder='seuemail@exemplo.com'
                     keyboardType="email-address"
+                    error={erros.email}
                 />
+
                 <Label texto={'SENHA'} />
                 <Input
                     value={senha}
                     onChangeText={setSenha}
                     placeholder="senha_exemplo123"
                     secureTextEntry
+                    error={erros.senha}
                 />
 
                 <TouchableOpacity 
                     style={styles.botao}
-                    // onPress={() => navigation.navigate('Home')} 
+                    onPress={() => enviarFormulario()}
                     activeOpacity={0.7}
-                    onPress={() => validarformulario()}
                 >
                     <Text>Entrar</Text>
                 </TouchableOpacity>
@@ -56,7 +69,10 @@ export default function TelaLogin({ navigation }) {
 
             {/* FOOTER */}
             <View style={styles.footer}>
-                <Text>Não tem uma conta? Cadastre-se</Text>
+                <Text>
+                    Não tem uma conta? 
+                    <Text style={styles.link} onPress={() => navigation.navigate('Home')} > Cadastre-se </Text>
+                </Text>
             </View>
         </View>
     );  
@@ -92,8 +108,12 @@ const styles = StyleSheet.create({
   botao: {
     padding: 12,
     borderRadius: 8,
-    marginTop: 40,
+    marginTop: 80,
     backgroundColor: '#FFBE31',
-    alignItems: 'center'
+    alignItems: 'center',
+    color: '#0C343E'
+  },
+  link: {
+    color: 'blue'
   }
 });

@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     label: {
         width: '100%',
         marginTop: 6,
-        marginBottom: 4
+        marginBottom: 4,
+        color: '#0C343E'
     }
 })
