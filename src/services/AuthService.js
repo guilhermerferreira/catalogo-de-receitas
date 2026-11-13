@@ -1,23 +1,35 @@
-import { conectarBanco } from "../database/database";
 import { buscarEmail, cadastrar } from "../database/UsuarioRepository";
 import Usuario from "../models/Usuario";
 
-const db = await conectarBanco();
-
-export async function cadastrarUsuario(dadosUsuario) {
-
+export async function cadastrarUsuario(db, dadosUsuario) {
     const usuarioExistente = await buscarEmail(db, dadosUsuario.email);
 
+    console.log('2. USUARIO EXISTENTE:', usuarioExistente)
+
     if(usuarioExistente) {
-        throw new Error('E-mail já cadastrado.');
+        throw new Error('E-mail já cadastrado.');   
     }
     
     const novoUsuario = new Usuario(
         null, // id - autoincrement
         dadosUsuario.nome,
         dadosUsuario.email,
-        dadosUsuario.senhaHash
+        dadosUsuario.senha
     );
 
     await cadastrar(db, novoUsuario);
+}
+
+export async function realizarLogin(db, dadosLogin) {
+    const usuario = await buscarEmail(db, dadosLogin.email)
+
+    if(!usuario) {
+        throw new Error('E-mail ou senha incorretos.')
+    }
+
+    if(usuario.senha !== dadosLogin.senha) {
+        throw new Error('E-mail ou senha incorretos.')
+    }
+
+    return usuario;
 }

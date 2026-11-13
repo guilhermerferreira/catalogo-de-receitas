@@ -9,8 +9,8 @@ export async function conectarBanco() {
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome VARCHAR(100) NOT NULL,
-            email VARCHAR (100) NOT NULL UNIQUE,
-            senha_hash VARCHAR (30) NOT NULL   
+            email VARCHAR(100) NOT NULL UNIQUE,
+            senha TEXT  NOT NULL   
         );    
     `);
     return db;

@@ -1,8 +1,8 @@
 export default class Usuario {
-    constructor(id, nome, email, senhaHash) {
+    constructor(id, nome, email, senha) {
         this.id = id;
         this.nome = nome;
         this.email = email;
-        this.senhaHash = senhaHash;
+        this.senha = senha;
     }
 }

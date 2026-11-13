@@ -1,8 +1,10 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-import Label from "../components/Label";
-import Input from "../components/Input";
 import { useState } from "react";
 import { validarCadastro } from "../validators/AuthValidator";
+import { conectarBanco } from "../database/database"
+import { cadastrarUsuario } from "../services/AuthService";
+import Label from "../components/Label";
+import Input from "../components/Input";
 
 export default function TelaCadastro({navigation}) {
     const [nome, setNome] = useState('');
@@ -10,25 +12,40 @@ export default function TelaCadastro({navigation}) {
     const [senha, setSenha] = useState('');
     const [confirmaSenha, setConfirmaSenha] = useState('');
     const [erros, setErros] = useState({
-        nome: '', email: '', senha: '', confirmaSenha: ''
-    })
-    
-    function enviaCadastro() {
+        nome: '', email: '', senhaHash: '', confirmaSenha: ''
+    });
+
+    async function enviaCadastro() {
         const resultado = validarCadastro(nome, email, senha, confirmaSenha);
         setErros(resultado);
 
         const possuiErros = Object.values(resultado)
             .some( erro => erro !== '' );
 
-        if (possuiErros) {
-            return;
+        if (possuiErros) { return; }
+
+        // Tenta cadastrar o usuario, Se encontrar erro cai no catch
+        try {
+            const db = await conectarBanco();
+        
+            const novoUsuario = {
+                nome: nome,
+                email: email,
+                senha: senha
+            };
+            // insere o novo usuario no banco
+            await cadastrarUsuario(db, novoUsuario);
+
+            // navega para a pagina de login
+            navigation.navigate('Login'); 
+        } catch (error) {
+            // recebe varios erros, e altera apenas o valor do 'email' 
+            setErros({
+                ...erros,
+                email: error.message // Erro: E-mail já cadastrado
+            })
         }
-
-        alert('Formulario Cadastrado com sucesso!');
-        setTimeout(300);
-        navigation.navigate('Login');
     }
-
 
     return (
         <View style={styles.container}>

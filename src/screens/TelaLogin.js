@@ -1,16 +1,19 @@
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import  Input  from "../components/Input";
-import Label from "../components/Label";
 import { validarLogin } from "../validators/AuthValidator";
 import { useState } from "react";
+import { conectarBanco } from "../database/database";
+import  Input  from "../components/Input";
+import Label from "../components/Label";
+import { realizarLogin } from "../services/AuthService";
 
 export default function TelaLogin({ navigation }) {
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [erros, setErros] = useState({ email: '', senha: '' });
+    const [erroLogin, setErroLogin] = useState('');
     
-    function enviarLogin() {
+    async function enviarLogin() {
         const resultado = validarLogin(email, senha);
         setErros(resultado);
 
@@ -21,8 +24,24 @@ export default function TelaLogin({ navigation }) {
         if (possuiErros) {
             return;
         }
+        
+        try{
+            const db = await conectarBanco();
+            
+            const usuario = {
+                email: email,
+                senha: senha
+            }
 
-        navigation.navigate('Home');
+            const usuario_logado = await realizarLogin(db, usuario)    
+            if(usuario_logado) {
+                navigation.navigate('Home');
+            }
+
+        } catch (error) {
+            setErroLogin(error.message);
+        }
+
     }
 
     return (
@@ -53,6 +72,9 @@ export default function TelaLogin({ navigation }) {
                     secureTextEntry
                     error={erros.senha}
                 />
+
+                {erroLogin ? <Text style={styles.msgErroLogin}>{ erroLogin }</Text> : null}
+
 
                 {/* BOTÃO */}
                 <TouchableOpacity 
@@ -124,5 +146,11 @@ const styles = StyleSheet.create({
     link: {
         fontWeight: 'bold',
         color: 'blue'
+    },
+    msgErroLogin: {
+        textAlign: 'center',
+        color: '#e53935',
+        fontSize: 14,
+        marginTop: 10, // -10, porque o input da um marginBottom de 10
     }
 });
