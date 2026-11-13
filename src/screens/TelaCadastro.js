@@ -71,17 +71,18 @@ export default function TelaCadastro({navigation}) {
                     secureTextEntry
                 />        
 
+                {/* BOTÃO */}
                 <TouchableOpacity 
                     style={styles.botao}
                     onPress={() => enviaCadastro()}
                     activeOpacity={0.7}
                 >
-                    <Text>Criar minha conta</Text>
+                    <Text style={styles.textoBotao}>Criar minha conta</Text>
                 </TouchableOpacity>                                     
             </View>
 
             <View style={styles.footer}>
-                <Text>Já tem conta?
+                <Text style={styles.textoFooter}>Já tem conta?
                     <Text style={styles.link} onPress={() => navigation.navigate('Login')}> Entrar</Text>
                 </Text>
             </View>
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFF6E7',
         padding: 24,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center'
     },
     header: {
@@ -123,10 +124,19 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginTop: 40,
     },
+    textoBotao: {
+        fontWeight: 'bold',
+        color: '#0C343E'
+    },
     footer: {
         fontSize: 13,
+        alignItems: 'center'
+    },
+    textoFooter: {
+        color: '#0C343E',
     },
     link: {
+        fontWeight: 'bold',
         color: 'blue'
     }
 })

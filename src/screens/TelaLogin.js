@@ -54,18 +54,19 @@ export default function TelaLogin({ navigation }) {
                     error={erros.senha}
                 />
 
+                {/* BOTÃO */}
                 <TouchableOpacity 
                     style={styles.botao}
                     onPress={() => enviarLogin()}
                     activeOpacity={0.7}
                 >
-                    <Text>Entrar</Text>
+                    <Text style={styles.textoBotao}>Entrar</Text>
                 </TouchableOpacity>
             </View>
 
             {/* FOOTER */}
             <View style={styles.footer}>
-                <Text>
+                <Text style={styles.textoFooter}>
                     Não tem uma conta? 
                     <Text style={styles.link} onPress={() => navigation.navigate('Cadastro')} > Crie sua conta! </Text>
                 </Text>
@@ -109,10 +110,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         color: '#0C343E'
     },
+    textoBotao: {
+        fontWeight: 'bold',
+        color: '#0C343E'
+    },
     footer: {
-        fontSize: 13
+        fontSize: 13,
+        alignItems: 'center'
+    },
+    textoFooter: {
+        color: '#0C343E',
     },
     link: {
+        fontWeight: 'bold',
         color: 'blue'
     }
 });

@@ -1,0 +1,97 @@
+import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native"
+
+
+export default function TelaInicial({navigation}) {
+    return (
+        <View style={styles.container}>
+
+            {/* CONTAINER IMAGEM */}
+            <View style={styles.containerImagem}>
+                <Image style={styles.imagem} source={require('../../assets/logo.png')} />
+            </View>
+
+            {/* CONTEUDO */}
+            <View style={styles.conteudo}>
+                <>
+                    <Text style={styles.titulo}>SUA PRÓXIMA RECEITA COMEÇA AQUI.</Text>
+                    <Text style={styles.subtitulo}>Receitas para descobrir, guardar e compartilhar.</Text>
+                </>
+
+                {/* BOTÃO */}
+                <TouchableOpacity
+                    style={styles.botao}
+                    onPress={() => navigation.navigate('Login')}
+                    activeOpacity={0.7}
+                >
+                    <Text style={styles.textoBotao}>Entrar</Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* FOOTER */}
+            <View style={styles.footer}>
+                <Text style={styles.textoFooter}>
+                    Ainda não tem conta? 
+                    <Text style={styles.link} onPress={() => navigation.navigate('Cadastro')} > Crie uma conta! </Text>
+                </Text>
+            </View>
+
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {    
+        flex: 1,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#244C59',
+        padding: 24
+    },
+    containerImagem: {
+        width: '100%',
+        padding: 30,
+        alignItems: 'center'
+    },
+    imagem: {
+        width: 300,
+        height: 300
+    },
+    conteudo: {
+        flex: 1,
+        width: '100%',
+        alignItems: 'center',
+    },
+    titulo: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#FFF9E9'
+    },
+    subtitulo: {
+        color: '#FFF9E9',
+        marginTop: 5,
+        fontSize: 12,
+    },
+    botao: {
+        width: '100%',
+        padding: 12,
+        borderRadius: 8,
+        marginTop: 80,
+        alignItems: 'center',
+        backgroundColor: '#FFBE31',
+    },
+    textoBotao: {
+        fontWeight: 'bold',
+        color: '#0C343E'
+    },
+    footer: {
+        fontSize: 13,
+        alignItems: 'center'
+    },
+    textoFooter: {
+        color: '#FFF9E9',
+    },
+    link: {
+        fontWeight: 'bold',
+        color: '#ffff'
+    }
+})
