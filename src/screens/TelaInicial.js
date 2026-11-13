@@ -5,47 +5,64 @@ export default function TelaInicial({navigation}) {
     return (
         <View style={styles.container}>
 
-            {/* CONTAINER IMAGEM */}
-            <View style={styles.containerImagem}>
-                <Image style={styles.imagem} source={require('../../assets/logo.png')} />
+            <Image // é necessario que seja o primeiro elemento, para ser a base e não sobrepor
+                source={require('../../assets/fundo-pagina-inicial.png')}
+                resizeMode="cover"
+                style={styles.backgroundImage}
+            />
+
+            <View style={styles.overlay}>
+
+                {/* CONTAINER IMAGEM */}
+                <View style={styles.containerImagem}>
+                    <Image style={styles.imagem} source={require('../../assets/logo.png')} />
+                </View>
+
+                {/* CONTEUDO */}
+                <View style={styles.conteudo}>
+                    <>
+                        <Text style={styles.titulo}>SUA PRÓXIMA RECEITA COMEÇA AQUI.</Text>
+                        <Text style={styles.subtitulo}>Receitas para descobrir, guardar e compartilhar.</Text>
+                    </>
+
+                    {/* BOTÃO */}
+                    <TouchableOpacity
+                        style={styles.botao}
+                        onPress={() => navigation.navigate('Login')}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={styles.textoBotao}>Entrar</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* FOOTER */}
+                <View style={styles.footer}>
+                    <Text style={styles.textoFooter}>
+                        Ainda não tem conta? 
+                        <Text style={styles.link} onPress={() => navigation.navigate('Cadastro')} > Crie uma conta! </Text>
+                    </Text>
+                </View>
+
             </View>
-
-            {/* CONTEUDO */}
-            <View style={styles.conteudo}>
-                <>
-                    <Text style={styles.titulo}>SUA PRÓXIMA RECEITA COMEÇA AQUI.</Text>
-                    <Text style={styles.subtitulo}>Receitas para descobrir, guardar e compartilhar.</Text>
-                </>
-
-                {/* BOTÃO */}
-                <TouchableOpacity
-                    style={styles.botao}
-                    onPress={() => navigation.navigate('Login')}
-                    activeOpacity={0.7}
-                >
-                    <Text style={styles.textoBotao}>Entrar</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* FOOTER */}
-            <View style={styles.footer}>
-                <Text style={styles.textoFooter}>
-                    Ainda não tem conta? 
-                    <Text style={styles.link} onPress={() => navigation.navigate('Cadastro')} > Crie uma conta! </Text>
-                </Text>
-            </View>
-
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {    
-        flex: 1,
+        flex: 1, // tela inteira
+        backgroundColor: '#0C343E', // Cor de fundo de segurança
+    },
+    backgroundImage: {
+        position: 'absolute', // Retira o elemento do fluxo normal e o fixa nas bordas do elemento pai (IMAGEM DE FUNDO)
+        width: '100%',
+        height: '100%',
+    },
+    overlay: { // herdou oque havia no container, responsavel pelo conteudo
+        flex: 1, // garente que ira ocupar a tela inteira
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#244C59',
-        padding: 24
+        padding: 24, 
     },
     containerImagem: {
         width: '100%',
