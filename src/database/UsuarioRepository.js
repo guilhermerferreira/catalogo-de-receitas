@@ -3,14 +3,14 @@ export async function cadastrar(db, usuario) {
         `INSERT INTO usuarios (nome, email, senha)
          VALUES (?, ?, ?)`,
          [usuario.nome, usuario.email, usuario.senha]
-    )
+    );
 }
 
 export async function buscarEmail(db, email) {
     return await db.getFirstAsync (
         'SELECT * FROM usuarios WHERE email = ?',
         [email]
-    )
+    );
 }
 
 export async function listarTodos(db) {
