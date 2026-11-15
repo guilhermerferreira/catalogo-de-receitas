@@ -3,10 +3,13 @@ import { Text, TextInput, StyleSheet } from "react-native";
 /**
  * @param {import('react-native').TextInputProps} props
  */
-export default function Input({error, ...props}) {
+export default function Input({ style, error, ...props }) {
     return (
         <>
-            <TextInput style={styles.input} {...props}/>
+            <TextInput 
+                style={[styles.input, style]} 
+                {...props}
+            />
             {error ? <Text style={styles.errorText}> {error} </Text> : null}
         </>
         
