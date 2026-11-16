@@ -1,10 +1,10 @@
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { validarLogin } from "../validators/AuthValidator";
 import { useState } from "react";
+import { validarLogin } from "../validators/AuthValidator";
 import { conectarBanco } from "../database/database";
+import { realizarLogin } from "../services/AuthService";
 import  Input  from "../components/Input";
 import Label from "../components/Label";
-import { realizarLogin } from "../services/AuthService";
 
 export default function TelaLogin({ navigation }) {
 
@@ -35,7 +35,10 @@ export default function TelaLogin({ navigation }) {
 
             const usuario_logado = await realizarLogin(db, usuario)    
             if(usuario_logado) {
-                navigation.navigate('Home');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Principal' }]
+                })
             }
 
         } catch (error) {
@@ -55,6 +58,7 @@ export default function TelaLogin({ navigation }) {
 
             {/* FORMULÁRIO */}
             <View style={styles.formContainer}>
+                {/* EMAIL */}
                 <Label texto={'E-MAIL'}/>
                 <Input 
                     value={email}
@@ -64,6 +68,7 @@ export default function TelaLogin({ navigation }) {
                     error={erros.email}
                 />
 
+                {/* SENHA */}
                 <Label texto={'SENHA'} />
                 <Input
                     value={senha}

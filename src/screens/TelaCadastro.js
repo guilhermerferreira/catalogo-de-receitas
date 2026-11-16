@@ -49,20 +49,26 @@ export default function TelaCadastro({navigation}) {
 
     return (
         <View style={styles.container}>
+
+            {/* HEADER */}
             <View style={styles.header}>
                 <Text style={styles.titulo}>Crie sua conta</Text>
                 <Text style={styles.subtitulo}>Entre para a comunidade PITADA</Text>
             </View>
 
+            {/* FORMULÁRIO */}
             <View style={styles.formContainer}>
 
+                {/* NOME */}
                 <Label texto={'NOME'} />
                 <Input
                     value={nome}
                     onChangeText={setNome}
                     placeholder="Como podemos te chamar?"
                     error={erros.nome}
-                />                
+                />               
+
+                 {/* E-MAIL */}
                 <Label texto={'E-MAIL'} />
                 <Input
                     value={email}
@@ -70,7 +76,9 @@ export default function TelaCadastro({navigation}) {
                     placeholder="seuemail@exemplo.com"
                     error={erros.email}
                     keyboardType="email-address"
-                />                
+                />        
+                
+                {/* SENHA */}
                 <Label texto={'SENHA'} />
                 <Input
                     value={senha}
@@ -79,6 +87,8 @@ export default function TelaCadastro({navigation}) {
                     error={erros.senha}
                     secureTextEntry
                 />   
+
+                {/* CONFIRMAR SENHA */}
                 <Label texto={'CONFIRMAR SENHA'} />
                 <Input
                     value={confirmaSenha}
@@ -95,14 +105,17 @@ export default function TelaCadastro({navigation}) {
                     activeOpacity={0.7}
                 >
                     <Text style={styles.textoBotao}>Criar minha conta</Text>
-                </TouchableOpacity>                                     
+                </TouchableOpacity>        
+
             </View>
 
+            {/* FOOTER */}
             <View style={styles.footer}>
                 <Text style={styles.textoFooter}>Já tem conta?
                     <Text style={styles.link} onPress={() => navigation.navigate('Login')}> Entrar</Text>
                 </Text>
             </View>
+            
         </View>
     );
 }

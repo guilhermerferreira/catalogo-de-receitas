@@ -10,7 +10,7 @@ export default function TelaHome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF6E7',
     alignItems: 'center',
     justifyContent: 'center',
   },
