@@ -30,6 +30,6 @@ export async function realizarLogin(db, dadosLogin) {
     if(usuario.senha !== dadosLogin.senha) {
         throw new Error('E-mail ou senha incorretos.')
     }
-
+    
     return usuario;
 }

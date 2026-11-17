@@ -1,9 +1,15 @@
 import { Text, View, StyleSheet } from "react-native";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function TelaHome() {
-    return (
+
+const { usuario } = useContext(AuthContext);
+
+  return (
         <View style={styles.container}>
-            <Text>Vem com o pai</Text>
+            <Text>Tela Home!</Text>
+            <Text>{ usuario?.nome }</Text>
         </View>
     )
 }

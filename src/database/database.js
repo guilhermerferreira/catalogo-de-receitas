@@ -17,12 +17,15 @@ export async function conectarBanco() {
     await db.execAsync(`
         CREATE TABLE IF NOT EXISTS receitas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER NOT NULL,
             nome VARCHAR(100) NOT NULL,
             categoria VARCHAR(60) NOT NULL,
-            tempo INTEGER NOT NULL,
-            dificuldade VARCHAR(20) NOT NULL,
-            ingreditentes TEXT NOT NULL,
-            modo_de_preparo TEXT NOT NULL
+            ingredientes TEXT NOT NULL,
+            modo_de_preparo TEXT NOT NULL,
+
+            FOREIGN KEY(usuario_id)
+                REFERENCES usuarios(id)
+                ON DELETE CASCADE
         );
     `);
 

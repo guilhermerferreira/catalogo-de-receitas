@@ -1,12 +1,12 @@
 import Receita from "../models/Receita";
+import { criar } from "../database/ReceitaRepository";
 
 export async function criarReceita(db, receita) {
     const novaReceita = new Receita(
         null, // id - autoincrement
+        receita.usuario_id,
         receita.nome,
-        receita.tempo,
         receita.categoria,
-        receita.dificuldade,
         receita.ingredientes,
         receita.modoDePreparo
     );  
