@@ -1,9 +1,10 @@
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function TelaInicial({navigation}) {
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
 
             <Image // é necessario que seja o primeiro elemento, para ser a base e não sobrepor
                 source={require('../../assets/fundo-pagina-inicial.png')}
@@ -44,7 +45,7 @@ export default function TelaInicial({navigation}) {
                 </View>
 
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 24, 
+        marginTop: 40 
     },
     containerImagem: {
         width: '100%',

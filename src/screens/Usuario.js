@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Usuario({ navigation }) {
     
@@ -21,58 +22,60 @@ export default function Usuario({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.conteudo}>
 
-            <Text style={styles.subtitulo}>
-                Seu cantinho na comunidade PITADA
-            </Text>
+                <Text style={styles.subtitulo}>
+                    Seu cantinho na comunidade PITADA
+                </Text>
 
-            <View style={styles.perfil}>
-                <View style={styles.avatar}>
-                    <Text style={styles.iniciais}>{iniciais}</Text>
+                <View style={styles.perfil}>
+                    <View style={styles.avatar}>
+                        <Text style={styles.iniciais}>{iniciais}</Text>
+                    </View>
+
+                    <View>
+                        <Text style={styles.nome}>
+                            {usuario?.nome || 'Usuário'}
+                        </Text>
+
+                        <Text style={styles.descricao}>
+                            Minhas receitas e descobertas
+                        </Text>
+                    </View>
                 </View>
 
-                <View>
-                    <Text style={styles.nome}>
-                        {usuario?.nome || 'Usuário'}
-                    </Text>
+                <View style={styles.divisor} />
 
-                    <Text style={styles.descricao}>
-                        Minhas receitas e descobertas
-                    </Text>
+                <View style={styles.opcoes}>
+
+                    <View style={styles.opcao}>
+                        <Ionicons name="person-outline" size={20} color="#0C343E" />
+                        <Text style={styles.textoOpcao}>Editar perfil</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#888" />
+                    </View>
+
+                    <View style={styles.opcao}>
+                        <Ionicons name="settings-outline" size={20} color="#0C343E" />
+                        <Text style={styles.textoOpcao}>Configurações</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#888" />
+                    </View>
+
+                    <View style={styles.opcao}>
+                        <Ionicons name="information-circle-outline" size={20} color="#0C343E" />
+                        <Text style={styles.textoOpcao}>Sobre o aplicativo</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#888" />
+                    </View>
+
                 </View>
+
+                <TouchableOpacity style={styles.botaoSair} onPress={sair}>
+                    <Ionicons name="log-out-outline" size={20} color="#FFFFFF" />
+                    <Text style={styles.textoSair}>Sair</Text>
+                </TouchableOpacity>
+
             </View>
-
-            <View style={styles.divisor} />
-
-            <View style={styles.opcoes}>
-
-                <View style={styles.opcao}>
-                    <Ionicons name="person-outline" size={20} color="#0C343E" />
-                    <Text style={styles.textoOpcao}>Editar perfil</Text>
-                    <Ionicons name="chevron-forward" size={20} color="#888" />
-                </View>
-
-                <View style={styles.opcao}>
-                    <Ionicons name="settings-outline" size={20} color="#0C343E" />
-                    <Text style={styles.textoOpcao}>Configurações</Text>
-                    <Ionicons name="chevron-forward" size={20} color="#888" />
-                </View>
-
-                <View style={styles.opcao}>
-                    <Ionicons name="information-circle-outline" size={20} color="#0C343E" />
-                    <Text style={styles.textoOpcao}>Sobre o aplicativo</Text>
-                    <Ionicons name="chevron-forward" size={20} color="#888" />
-                </View>
-
-            </View>
-
-            <TouchableOpacity style={styles.botaoSair} onPress={sair}>
-                <Ionicons name="log-out-outline" size={20} color="#FFFFFF" />
-                <Text style={styles.textoSair}>Sair</Text>
-            </TouchableOpacity>
-
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -80,9 +83,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF6E7',
+        
+    },
+    conteudo: {
+        flex: 1,
         padding: 12,
     },
-
     subtitulo: {
         color: '#777',
         fontSize: 13,
@@ -154,7 +160,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
-        marginTop: 12,
+        marginTop: 40,
     },
 
     textoSair: {

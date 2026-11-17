@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View , Platform} from "react-native";
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { criarReceita } from "../services/ReceitaService";
@@ -6,6 +6,7 @@ import { conectarBanco } from "../database/database";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import Ionicons from "@react-native-vector-icons/ionicons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function CadastroReceita() {
@@ -79,123 +80,133 @@ export default function CadastroReceita() {
     }
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-
-            {/* HEADER */}
-            <View style={styles.header}>
-                <Text style={styles.titulo}> Nova receita </Text>
-                <Text style={styles.subtitulo}> Compartilhe uma receita com a comunidade </Text>
-            </View>
-
-            {/* FORMULÁRIO */}
-            <View style={styles.formContainer}>
-
-                {/* AQUI VAI SER ONDE O USUARIO COLOCA A FOTO */}
-                <View>
-
-                </View>
-
-                {/* NOME DA RECEITA */}
-                <Label texto={'NOME DA RECEITA'}/>
-                <Input 
-                    value={nome}
-                    onChangeText={setNome}
-                    placeholder="Ex: Bolo de cenoura"
-                />
-
-                {/* CATEGORIAS */}
-                <Label texto={'CATEGORIA'}/>
-                <View style={styles.opcoes}>
-                    {/* BOTÃO CATEGORIA */}
-                    {categorias.map((categoria, index ) => (
-                        <Pressable 
-                            key={index} 
-                            onPress={() => setCategoriaSelecionada(categoria)}
-                            style={[styles.categoria, 
-                                categoriaSelecionada === categoria && styles.categoriaSelecionada
-                            ]}
-                        > 
-                            {/* TEXTO BOTÃO CATEGORIA  */}
-                            <Text 
-                                style={[styles.textoCategoria,
-                                     categoriaSelecionada === categoria && styles.textoCategoriaSelecionada
-                                ]}
-                            >
-                                {categoria}
-                            </Text>
-                        </Pressable>
-                    ))}
-                </View>
-
-                {/* INGREDIENTES */}
-                <View style={styles.secao}>
-
-                    <Label texto={'INGREDIENTES'}/>
-                    <View style={styles.linhaAdicionar}>
-                        <Input 
-                            style={{ width: '85%'}}
-                            value={ingredienteAtual}
-                            onChangeText={setIngredienteAtual}
-                            placeholder="Liste ingredientes e quantidades..."
-                        />
-                        {/* BOTAO ADICIONAR */}
-                        <Pressable style={styles.botaoAdicionar} onPress={adicionarIngrediente}>
-                            <Text style={styles.textoBotao}> + </Text>
-                        </Pressable>
-                    </View>
-                    
-                    {/* LISTA DE INGREDIENTES */}
-                    {ingredientes.map((item, index) => (
-                        <View style={styles.itemLista} key={index}> 
-                            <Text style={styles.textoItem}> { item } </Text>
-                            {/* BOTÃO REMOVER */}
-                            <Pressable style={styles.iconeRemover} onPress={() => removerIngrediente(index)}>
-                                <Ionicons name={'trash'} color={'red'} size={18} />
-                            </Pressable>
-                        </View>
-                    ))}
-                </View>
-                
-                {/* MODO DE PREPARO */}
-                <View style={styles.secao}>
-                    <Label texto={'MODO DE PREPARO'}/>
-
-                    <View style={styles.linhaAdicionar}>
-                        <Input 
-                            style={{ width: '85%'}}
-                            value={preparoAtual}
-                            onChangeText={setPreparoAtual}
-                            placeholder="Descreva o passo a passo da receita..."
-                        />
-                        {/* BOTAO ADICIONAR */}
-                        <Pressable style={styles.botaoAdicionar} onPress={adicionarModoDePreparo}>
-                            <Text style={styles.textoBotao}> + </Text>
-                        </Pressable>
-                    </View>
-
-                    {/* LISTA DO MODO DE PREPARO */}
-                    {modoDePreparo.map((item, index) => (
-                        <View style={styles.itemLista} key={index}> 
-                            <Text style={styles.textoItem}> { item } </Text>
-                            {/* BOTÃO REMOVER */}
-                            <Pressable style={styles.iconeRemover} onPress={() => removerModoDePreaparo(index)}>
-                                <Ionicons name={'trash'} color={'red'} size={18} />
-                            </Pressable>
-                        </View>
-                    ))}
-                </View>
-                
-                {/* BOTAO DE ENVIAR FORMULARIO */}
-                <TouchableOpacity 
-                    style={styles.botaoPublicar} 
-                    activeOpacity={0.7}
-                    onPress={publicarReceita}
+        <KeyboardAvoidingView 
+            style={{ flex: 1 }} 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+        >
+            <SafeAreaView style={styles.container}>
+                <ScrollView 
+                    contentContainerStyle={styles.conteudo} // conteudo
+                    keyboardShouldPersistTaps="handled"
                 >
-                    <Text style={styles.textoBotaoPublicar}>Publicar Receita</Text>
-                </TouchableOpacity>
 
-            </View>      
-        </ScrollView>
+                    {/* HEADER */}
+                    <View style={styles.header}>
+                        <Text style={styles.titulo}> Nova receita </Text>
+                        <Text style={styles.subtitulo}> Compartilhe uma receita com a comunidade </Text>
+                    </View>
+
+                    {/* FORMULÁRIO */}
+                    <View style={styles.formContainer}>
+
+                        {/* AQUI VAI SER ONDE O USUARIO COLOCA A FOTO */}
+                        <View>
+
+                        </View>
+
+                        {/* NOME DA RECEITA */}
+                        <Label texto={'NOME DA RECEITA'}/>
+                        <Input 
+                            value={nome}
+                            onChangeText={setNome}
+                            placeholder="Ex: Bolo de cenoura"
+                        />
+
+                        {/* CATEGORIAS */}
+                        <Label texto={'CATEGORIA'}/>
+                        <View style={styles.opcoes}>
+                            {/* BOTÃO CATEGORIA */}
+                            {categorias.map((categoria, index ) => (
+                                <Pressable 
+                                    key={index} 
+                                    onPress={() => setCategoriaSelecionada(categoria)}
+                                    style={[styles.categoria, 
+                                        categoriaSelecionada === categoria && styles.categoriaSelecionada
+                                    ]}
+                                > 
+                                    {/* TEXTO BOTÃO CATEGORIA  */}
+                                    <Text 
+                                        style={[styles.textoCategoria,
+                                            categoriaSelecionada === categoria && styles.textoCategoriaSelecionada
+                                        ]}
+                                    >
+                                        {categoria}
+                                    </Text>
+                                </Pressable>
+                            ))}
+                        </View>
+
+                        {/* INGREDIENTES */}
+                        <View style={styles.secao}>
+
+                            <Label texto={'INGREDIENTES'}/>
+                            <View style={styles.linhaAdicionar}>
+                                <Input 
+                                    style={{ width: '85%'}}
+                                    value={ingredienteAtual}
+                                    onChangeText={setIngredienteAtual}
+                                    placeholder="Liste ingredientes e quantidades..."
+                                />
+                                {/* BOTAO ADICIONAR */}
+                                <Pressable style={styles.botaoAdicionar} onPress={adicionarIngrediente}>
+                                    <Text style={styles.textoBotao}> + </Text>
+                                </Pressable>
+                            </View>
+                            
+                            {/* LISTA DE INGREDIENTES */}
+                            {ingredientes.map((item, index) => (
+                                <View style={styles.itemLista} key={index}> 
+                                    <Text style={styles.textoItem}> { item } </Text>
+                                    {/* BOTÃO REMOVER */}
+                                    <Pressable style={styles.iconeRemover} onPress={() => removerIngrediente(index)}>
+                                        <Ionicons name={'trash'} color={'red'} size={18} />
+                                    </Pressable>
+                                </View>
+                            ))}
+                        </View>
+                        
+                        {/* MODO DE PREPARO */}
+                        <View style={styles.secao}>
+                            <Label texto={'MODO DE PREPARO'}/>
+
+                            <View style={styles.linhaAdicionar}>
+                                <Input 
+                                    style={{ width: '85%'}}
+                                    value={preparoAtual}
+                                    onChangeText={setPreparoAtual}
+                                    placeholder="Descreva o passo a passo da receita..."
+                                />
+                                {/* BOTAO ADICIONAR */}
+                                <Pressable style={styles.botaoAdicionar} onPress={adicionarModoDePreparo}>
+                                    <Text style={styles.textoBotao}> + </Text>
+                                </Pressable>
+                            </View>
+
+                            {/* LISTA DO MODO DE PREPARO */}
+                            {modoDePreparo.map((item, index) => (
+                                <View style={styles.itemLista} key={index}> 
+                                    <Text style={styles.textoItem}> { item } </Text>
+                                    {/* BOTÃO REMOVER */}
+                                    <Pressable style={styles.iconeRemover} onPress={() => removerModoDePreaparo(index)}>
+                                        <Ionicons name={'trash'} color={'red'} size={18} />
+                                    </Pressable>
+                                </View>
+                            ))}
+                        </View>
+                        
+                        {/* BOTAO DE ENVIAR FORMULARIO */}
+                        <TouchableOpacity 
+                            style={styles.botaoPublicar} 
+                            activeOpacity={0.7}
+                            onPress={publicarReceita}
+                        >
+                            <Text style={styles.textoBotaoPublicar}>Publicar Receita</Text>
+                        </TouchableOpacity>
+
+                    </View>      
+                </ScrollView>
+            </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -204,10 +215,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFF6E7',
     },
-    contentContainer: {
+    conteudo: {
+        flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 24
+        padding: 24,
+        marginTop: 40
     },
     header: {
         width: '100%',

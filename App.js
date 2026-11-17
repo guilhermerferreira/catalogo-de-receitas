@@ -12,7 +12,8 @@ export default function App() {
   return (
     <AuthProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='Inicial'>
+        <Stack.Navigator 
+          initialRouteName='Inicial' screenOptions={{ headerShown: false }}>
           {/* Telas de autenticação */}
           <Stack.Screen name='Inicial' component={TelaInicial} />
           <Stack.Screen name='Login' component={TelaLogin} />

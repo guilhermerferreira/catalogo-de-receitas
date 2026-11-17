@@ -4,6 +4,7 @@ import { validarLogin } from "../validators/AuthValidator";
 import { conectarBanco } from "../database/database";
 import { realizarLogin } from "../services/AuthService";
 import { AuthContext } from "../context/AuthContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../components/Input";
 import Label from "../components/Label";
 
@@ -56,63 +57,65 @@ export default function TelaLogin({ navigation }) {
     }
   }
   return (
-    <View style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.titulo}>Faça seu login</Text>
-        <Text style={styles.subtitulo}>É um prazer ter você de volta!</Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.conteudo}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <Text style={styles.titulo}>Faça seu login</Text>
+          <Text style={styles.subtitulo}>É um prazer ter você de volta!</Text>
+        </View>
 
-      {/* FORMULÁRIO */}
-      <View style={styles.formContainer}>
-        {/* EMAIL */}
-        <Label texto={"E-MAIL"} />
-        <Input
-          value={email}
-          onChangeText={setEmail}
-          placeholder="seuemail@exemplo.com"
-          keyboardType="email-address"
-          error={erros.email}
-        />
+        {/* FORMULÁRIO */}
+        <View style={styles.formContainer}>
+          {/* EMAIL */}
+          <Label texto={"E-MAIL"} />
+          <Input
+            value={email}
+            onChangeText={setEmail}
+            placeholder="seuemail@exemplo.com"
+            keyboardType="email-address"
+            error={erros.email}
+          />
 
-        {/* SENHA */}
-        <Label texto={"SENHA"} />
-        <Input
-          value={senha}
-          onChangeText={setSenha}
-          placeholder="senha_exemplo123"
-          secureTextEntry
-          error={erros.senha}
-        />
+          {/* SENHA */}
+          <Label texto={"SENHA"} />
+          <Input
+            value={senha}
+            onChangeText={setSenha}
+            placeholder="senha_exemplo123"
+            secureTextEntry
+            error={erros.senha}
+          />
 
-        {erroLogin ? (
-          <Text style={styles.msgErroLogin}>{erroLogin}</Text>
-        ) : null}
+          {erroLogin ? (
+            <Text style={styles.msgErroLogin}>{erroLogin}</Text>
+          ) : null}
 
-        {/* BOTÃO */}
-        <TouchableOpacity
-          style={styles.botao}
-          onPress={() => enviarLogin()}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.textoBotao}>Entrar</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* FOOTER */}
-      <View style={styles.footer}>
-        <Text style={styles.textoFooter}>
-          Não tem uma conta?
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate("Cadastro")}
+          {/* BOTÃO */}
+          <TouchableOpacity
+            style={styles.botao}
+            onPress={() => enviarLogin()}
+            activeOpacity={0.7}
           >
-            {" "}
-            Crie sua conta!{" "}
+            <Text style={styles.textoBotao}>Entrar</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* FOOTER */}
+        <View style={styles.footer}>
+          <Text style={styles.textoFooter}>
+            Não tem uma conta?
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate("Cadastro")}
+            >
+              {" "}
+              Crie sua conta!{" "}
+            </Text>
           </Text>
-        </Text>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -120,9 +123,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF6E7",
+  },
+  conteudo: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
     padding: 24,
+    marginTop: 40
   },
   header: {
     width: "100%",

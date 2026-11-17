@@ -2,6 +2,7 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import { validarCadastro } from "../validators/AuthValidator";
 import { conectarBanco } from "../database/database"
+import { SafeAreaView } from "react-native-safe-area-context";
 import { cadastrarUsuario } from "../services/AuthService";
 import Label from "../components/Label";
 import Input from "../components/Input";
@@ -48,75 +49,77 @@ export default function TelaCadastro({navigation}) {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.conteudo}>
 
-            {/* HEADER */}
-            <View style={styles.header}>
-                <Text style={styles.titulo}>Crie sua conta</Text>
-                <Text style={styles.subtitulo}>Entre para a comunidade PITADA</Text>
-            </View>
+                {/* HEADER */}
+                <View style={styles.header}>
+                    <Text style={styles.titulo}>Crie sua conta</Text>
+                    <Text style={styles.subtitulo}>Entre para a comunidade PITADA</Text>
+                </View>
 
-            {/* FORMULÁRIO */}
-            <View style={styles.formContainer}>
+                {/* FORMULÁRIO */}
+                <View style={styles.formContainer}>
 
-                {/* NOME */}
-                <Label texto={'NOME'} />
-                <Input
-                    value={nome}
-                    onChangeText={setNome}
-                    placeholder="Como podemos te chamar?"
-                    error={erros.nome}
-                />               
+                    {/* NOME */}
+                    <Label texto={'NOME'} />
+                    <Input
+                        value={nome}
+                        onChangeText={setNome}
+                        placeholder="Como podemos te chamar?"
+                        error={erros.nome}
+                    />               
 
-                 {/* E-MAIL */}
-                <Label texto={'E-MAIL'} />
-                <Input
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholder="seuemail@exemplo.com"
-                    error={erros.email}
-                    keyboardType="email-address"
-                />        
+                    {/* E-MAIL */}
+                    <Label texto={'E-MAIL'} />
+                    <Input
+                        value={email}
+                        onChangeText={setEmail}
+                        placeholder="seuemail@exemplo.com"
+                        error={erros.email}
+                        keyboardType="email-address"
+                    />        
+                    
+                    {/* SENHA */}
+                    <Label texto={'SENHA'} />
+                    <Input
+                        value={senha}
+                        onChangeText={setSenha}
+                        placeholder="Crie uma senha"
+                        error={erros.senha}
+                        secureTextEntry
+                    />   
+
+                    {/* CONFIRMAR SENHA */}
+                    <Label texto={'CONFIRMAR SENHA'} />
+                    <Input
+                        value={confirmaSenha}
+                        onChangeText={setConfirmaSenha}
+                        placeholder="Digite novamente"
+                        error={erros.confirmaSenha}
+                        secureTextEntry
+                    />        
+
+                    {/* BOTÃO */}
+                    <TouchableOpacity 
+                        style={styles.botao}
+                        onPress={() => enviaCadastro()}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={styles.textoBotao}>Criar minha conta</Text>
+                    </TouchableOpacity>        
+
+                </View>
+
+                {/* FOOTER */}
+                <View style={styles.footer}>
+                    <Text style={styles.textoFooter}>Já tem conta?
+                        <Text style={styles.link} onPress={() => navigation.navigate('Login')}> Entrar</Text>
+                    </Text>
+                </View>
                 
-                {/* SENHA */}
-                <Label texto={'SENHA'} />
-                <Input
-                    value={senha}
-                    onChangeText={setSenha}
-                    placeholder="Crie uma senha"
-                    error={erros.senha}
-                    secureTextEntry
-                />   
-
-                {/* CONFIRMAR SENHA */}
-                <Label texto={'CONFIRMAR SENHA'} />
-                <Input
-                    value={confirmaSenha}
-                    onChangeText={setConfirmaSenha}
-                    placeholder="Digite novamente"
-                    error={erros.confirmaSenha}
-                    secureTextEntry
-                />        
-
-                {/* BOTÃO */}
-                <TouchableOpacity 
-                    style={styles.botao}
-                    onPress={() => enviaCadastro()}
-                    activeOpacity={0.7}
-                >
-                    <Text style={styles.textoBotao}>Criar minha conta</Text>
-                </TouchableOpacity>        
-
             </View>
-
-            {/* FOOTER */}
-            <View style={styles.footer}>
-                <Text style={styles.textoFooter}>Já tem conta?
-                    <Text style={styles.link} onPress={() => navigation.navigate('Login')}> Entrar</Text>
-                </Text>
-            </View>
-            
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -124,9 +127,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF6E7',
+    },
+    conteudo: {
+        flex: 1,
         padding: 24,
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 40
     },
     header: {
         width: '100%',
@@ -160,7 +167,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         fontSize: 13,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     textoFooter: {
         color: '#0C343E',

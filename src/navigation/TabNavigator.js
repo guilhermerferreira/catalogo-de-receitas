@@ -14,6 +14,7 @@ export default function TabNavigator() {
         // ScreenOptions aplica uma configuração padrao a todas as abas de uma vez
         <Tab.Navigator initialRouteName='Home' screenOptions={{
             tabBarActiveTintColor: '#022730', 
+            headerShown: false,
             tabBarInactiveTintColor: '#022730', 
             tabBarStyle: { backgroundColor: '#FFFBF3', borderWidth: 1, borderColor: '#E5E0D0' }
         }}>
