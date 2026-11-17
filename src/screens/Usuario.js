@@ -1,9 +1,166 @@
-import { Text, View } from "react-native";
 
-export default function Usuario() {
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { useUsuario } from '../context/UsuarioContext';
+
+export default function Usuario({ navigation }) {
+
+    const { usuario, setUsuario } = useUsuario();
+
+    
+    const iniciais = usuario?.nome
+        ? usuario.nome.trim().split(/\s+/).slice(0, 2).map(nome => nome[0]).join('').toUpperCase()
+        : 'U';
+
+    function sair() {
+        setUsuario(null);
+
+        navigation.getParent()?.reset({
+            index: 0,
+            routes: [{ name: 'Login' }]
+        });
+    }
+
     return (
-        <View>
-            <Text> USUARIO </Text>
+        <View style={styles.container}>
+
+            <Text style={styles.subtitulo}>
+                Seu cantinho na comunidade PITADA
+            </Text>
+
+            <View style={styles.perfil}>
+                <View style={styles.avatar}>
+                    <Text style={styles.iniciais}>{iniciais}</Text>
+                </View>
+
+                <View>
+                    <Text style={styles.nome}>
+                        {usuario?.nome || 'Usuário'}
+                    </Text>
+
+                    <Text style={styles.descricao}>
+                        Minhas receitas e descobertas
+                    </Text>
+                </View>
+            </View>
+
+            <View style={styles.divisor} />
+
+            <View style={styles.opcoes}>
+
+                <View style={styles.opcao}>
+                    <Ionicons name="person-outline" size={20} color="#0C343E" />
+                    <Text style={styles.textoOpcao}>Editar perfil</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#888" />
+                </View>
+
+                <View style={styles.opcao}>
+                    <Ionicons name="settings-outline" size={20} color="#0C343E" />
+                    <Text style={styles.textoOpcao}>Configurações</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#888" />
+                </View>
+
+                <View style={styles.opcao}>
+                    <Ionicons name="information-circle-outline" size={20} color="#0C343E" />
+                    <Text style={styles.textoOpcao}>Sobre o aplicativo</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#888" />
+                </View>
+
+            </View>
+
+            <TouchableOpacity style={styles.botaoSair} onPress={sair}>
+                <Ionicons name="log-out-outline" size={20} color="#FFFFFF" />
+                <Text style={styles.textoSair}>Sair</Text>
+            </TouchableOpacity>
+
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#FFF6E7',
+        padding: 12,
+    },
+
+    subtitulo: {
+        color: '#777',
+        fontSize: 13,
+        marginBottom: 12,
+    },
+
+    perfil: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+
+    avatar: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: '#FFBE31',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+
+    iniciais: {
+        fontSize: 22,
+        color: '#0C343E',
+        fontWeight: 'bold',
+    },
+
+    nome: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#0C343E',
+        marginBottom: 5,
+    },
+
+    descricao: {
+        fontSize: 13,
+        color: '#777',
+    },
+
+    divisor: {
+        height: 1,
+        backgroundColor: '#E5DCCB',
+        marginBottom: 20,
+    },
+
+    opcoes: {
+        gap: 4,
+    },
+
+    opcao: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        gap: 10,
+    },
+
+    textoOpcao: {
+        flex: 1,
+        fontSize: 16,
+        color: '#0C343E',
+    },
+
+    botaoSair: {
+        backgroundColor: '#0C343E',
+        height: 50,
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 8,
+        marginTop: 12,
+    },
+
+    textoSair: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+});
