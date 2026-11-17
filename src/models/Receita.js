@@ -1,10 +1,9 @@
 export default class Receita {
-    constructor(id, nome, categoria, tempo, dificuldade, ingredientes = [], modoDePreparo = []) {
+    constructor(id, usuario_id, nome, categoria, ingredientes = [], modoDePreparo = []) {
         this.id = id;
+        this.usuario_id = usuario_id;
         this.nome = nome;
         this.categoria = categoria;
-        this.tempo = tempo;
-        this.dificuldade = dificuldade;
         this.ingredientes = ingredientes;
         this.modoDePreparo = modoDePreparo;
     }

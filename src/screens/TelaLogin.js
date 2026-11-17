@@ -1,12 +1,16 @@
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { validarLogin } from "../validators/AuthValidator";
 import { conectarBanco } from "../database/database";
 import { realizarLogin } from "../services/AuthService";
+import  { AuthContext } from "../context/AuthContext";
 import  Input  from "../components/Input";
 import Label from "../components/Label";
 
 export default function TelaLogin({ navigation }) {
+
+    // Permite acesso a função do Context
+    const { definirUsuario } = useContext(AuthContext);
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -35,6 +39,12 @@ export default function TelaLogin({ navigation }) {
 
             const usuario_logado = await realizarLogin(db, usuario)    
             if(usuario_logado) {
+                definirUsuario({
+                    id: usuario_logado.id,
+                    nome: usuario_logado.nome,
+                    email: usuario_logado.email
+                });
+
                 navigation.reset({
                     index: 0,
                     routes: [{ name: 'Principal' }]

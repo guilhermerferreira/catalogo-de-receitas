@@ -1,40 +1,84 @@
 import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { criarReceita } from "../services/ReceitaService";
+import { conectarBanco } from "../database/database";
 import Input from "../components/Input";
 import Label from "../components/Label";
-import { useState } from "react";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
+
 export default function CadastroReceita() {
+
+    const { usuario } = useContext(AuthContext);
     const categorias = ['Doce', 'Salgado', 'Salada', 'Bebida'];
-    const [categoriaSelecionada, SetCategoriaSelecionada] = useState('');
+    const [categoriaSelecionada, setCategoriaSelecionada] = useState('');
+
+    const [nome, setNome] = useState('');
     const [ingredienteAtual, setIngredienteAtual] = useState('');
     const [ingredientes, setIngredientes] = useState([]);
     const [preparoAtual, setPreparoAtual] = useState('');
     const [modoDePreparo, setModoDePreparo] = useState([]);
 
     function adicionarIngrediente() {
-        if (!ingredienteAtual.trim()) {
+        const ingrediente = ingredienteAtual.trim();
+
+        if (!ingrediente) {
             return;
         }
 
-        setIngredientes([...ingredientes, ingredienteAtual]);
+        setIngredientes(listaAtual => [...listaAtual, ingrediente]);
+        setIngredienteAtual('');
+    }
+
+    function removerIngrediente(indice) {
+        setIngredientes(listaAtual => 
+            listaAtual.filter((_, index) => index !== indice)
+        )
     }
 
     function adicionarModoDePreparo() {
-        if (!preparoAtual.trim()) {
+        const preparo = preparoAtual.trim();
+
+        if (!preparo) {
             return;
         }
 
-        setModoDePreparo([...modoDePreparo, preparoAtual]);
+        setModoDePreparo(listaAtual => [...listaAtual, preparo]);
+        setPreparoAtual('');
     }
 
-    function removerModoDePreaparo(){
+    function removerModoDePreaparo(indice){
+        setModoDePreparo(listaAtual =>
+            listaAtual.filter((_, index) => index !== indice)
+        );
+    }
+
+    async function publicarReceita() {
+        if(!usuario) {
+            return;
+        }
+        
+        const receita = {
+            nome: nome.trim(),
+            usuario_id: usuario.id,
+            categoria: categoriaSelecionada,
+            ingredientes: ingredientes,
+            modoDePreparo: modoDePreparo
+        }
+
+        try {
+            const db = await conectarBanco();
+            await criarReceita(db, receita);
+            console.log('Receita cadastrada com sucesso!');
+
+        } catch (error) {
+            console.log('Erro ao cadastrar receita: ', error)
+        }
 
     }
 
     return (
-
-        
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
             {/* HEADER */}
@@ -53,7 +97,11 @@ export default function CadastroReceita() {
 
                 {/* NOME DA RECEITA */}
                 <Label texto={'NOME DA RECEITA'}/>
-                <Input placeholder="Ex: Bolo de cenoura"/>
+                <Input 
+                    value={nome}
+                    onChangeText={setNome}
+                    placeholder="Ex: Bolo de cenoura"
+                />
 
                 {/* CATEGORIAS */}
                 <Label texto={'CATEGORIA'}/>
@@ -62,7 +110,7 @@ export default function CadastroReceita() {
                     {categorias.map((categoria, index ) => (
                         <Pressable 
                             key={index} 
-                            onPress={() => SetCategoriaSelecionada(categoria)}
+                            onPress={() => setCategoriaSelecionada(categoria)}
                             style={[styles.categoria, 
                                 categoriaSelecionada === categoria && styles.categoriaSelecionada
                             ]}
@@ -78,13 +126,6 @@ export default function CadastroReceita() {
                         </Pressable>
                     ))}
                 </View>
-
-                {/* TEMPO DE PREPARO */}
-                <Label texto={'TEMPO DE PREPARO (MIN)'}/>
-                <Input 
-                    style={{ height: 50 }}
-                    placeholder="    Ex: 30"
-                />
 
                 {/* INGREDIENTES */}
                 <View style={styles.secao}>
@@ -102,10 +143,15 @@ export default function CadastroReceita() {
                             <Text style={styles.textoBotao}> + </Text>
                         </Pressable>
                     </View>
+                    
                     {/* LISTA DE INGREDIENTES */}
                     {ingredientes.map((item, index) => (
                         <View style={styles.itemLista} key={index}> 
-                            <Text style={styles.textoIem}> { item } </Text>
+                            <Text style={styles.textoItem}> { item } </Text>
+                            {/* BOTÃO REMOVER */}
+                            <Pressable style={styles.iconeRemover} onPress={() => removerIngrediente(index)}>
+                                <Ionicons name={'trash'} color={'red'} size={18} />
+                            </Pressable>
                         </View>
                     ))}
                 </View>
@@ -132,7 +178,7 @@ export default function CadastroReceita() {
                         <View style={styles.itemLista} key={index}> 
                             <Text style={styles.textoItem}> { item } </Text>
                             {/* BOTÃO REMOVER */}
-                            <Pressable style={styles.iconeRemover} onPress={removerModoDePreaparo}>
+                            <Pressable style={styles.iconeRemover} onPress={() => removerModoDePreaparo(index)}>
                                 <Ionicons name={'trash'} color={'red'} size={18} />
                             </Pressable>
                         </View>
@@ -142,8 +188,10 @@ export default function CadastroReceita() {
                 {/* BOTAO DE ENVIAR FORMULARIO */}
                 <TouchableOpacity 
                     style={styles.botaoPublicar} 
-                    activeOpacity={0.7}>
-                        <Text style={styles.textoBotaoPublicar}>Publicar Receita</Text>
+                    activeOpacity={0.7}
+                    onPress={publicarReceita}
+                >
+                    <Text style={styles.textoBotaoPublicar}>Publicar Receita</Text>
                 </TouchableOpacity>
 
             </View>      
@@ -244,7 +292,7 @@ const styles = StyleSheet.create({
         padding: 16,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 30,
+        marginTop: 60,
         borderRadius: 12,
         backgroundColor: '#FFBE31'
     },
