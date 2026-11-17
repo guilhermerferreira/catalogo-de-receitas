@@ -11,3 +11,13 @@ export async function criar(db, receita) {
         ]
     ); 
 }
+
+export async function listar(db, usuarioId) {
+    return await db.getAllAsync(`
+        SELECT * FROM receitas 
+        WHERE usuario_id = ?
+        ORDER BY nome    
+    `,
+        [usuarioId]
+    );
+}

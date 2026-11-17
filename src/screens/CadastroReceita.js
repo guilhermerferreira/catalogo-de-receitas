@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View , Platform} from "react-native";
+import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View , Platform } from "react-native";
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { criarReceita } from "../services/ReceitaService";
