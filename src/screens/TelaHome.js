@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from "react-native";
 export default function TelaHome() {
     return (
         <View style={styles.container}>
-            <Text>Tela Home!</Text>
+            <Text>Vem com o pai</Text>
         </View>
     )
 }
