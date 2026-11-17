@@ -109,8 +109,7 @@ export default function TelaLogin({ navigation }) {
               style={styles.link}
               onPress={() => navigation.navigate("Cadastro")}
             >
-              {" "}
-              Crie sua conta!{" "}
+              Crie sua conta!
             </Text>
           </Text>
         </View>
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 24,
-    marginTop: 40
+    marginTop: 20
   },
   header: {
     width: "100%",

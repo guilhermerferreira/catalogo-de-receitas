@@ -17,7 +17,6 @@ export async function listar(db, usuarioId) {
         SELECT * FROM receitas 
         WHERE usuario_id = ?
         ORDER BY nome    
-    `,
-        [usuarioId]
+    `, [usuarioId]
     );
 }

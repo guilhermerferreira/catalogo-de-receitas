@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     },
     conteudo: {
         flex: 1,
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         padding: 24,
         marginTop: 40

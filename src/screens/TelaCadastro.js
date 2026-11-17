@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
         padding: 24,
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 40
+        marginTop: 20
     },
     header: {
         width: '100%',

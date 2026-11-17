@@ -9,7 +9,7 @@ export default function ReceitaCard({ receita, onPress, estilo = 'normal' }) {
             />
 
             <View style={styles.informacoes}>
-                <Text style={styles.nomeReceita}> { receita?.nome } Macarrão</Text>
+                <Text style={styles.nomeReceita}> { receita?.nome } </Text>
                 <Text style={styles.infoReceita}>
                     { receita?.tempo && receita?.dificuldade }
                     30 min  * Dificil
@@ -22,14 +22,15 @@ export default function ReceitaCard({ receita, onPress, estilo = 'normal' }) {
 
 const styles = StyleSheet.create({
     card: {
-        width: 170,
-        height: 170,
-        borderTopEndRadius: 12,
+        width: 160,
+        height: 160,
     },
     imagem: {
         position: 'absolute',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        borderRadius: 16
+        
     },  
     informacoes: {
         position: 'absolute',
