@@ -3,66 +3,27 @@ import { useState, useContext } from "react";
 import { validarLogin } from "../validators/AuthValidator";
 import { conectarBanco } from "../database/database";
 import { realizarLogin } from "../services/AuthService";
-import  { AuthContext } from "../context/AuthContext";
-import  Input  from "../components/Input";
+import { AuthContext } from "../context/AuthContext";
+import Input from "../components/Input";
 import Label from "../components/Label";
-import { useUsuario } from "../context/UsuarioContext";
 
 export default function TelaLogin({ navigation }) {
-  const { setUsuario } = useUsuario();
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [erros, setErros] = useState({ email: "", senha: "" });
-  const [erroLogin, setErroLogin] = useState("");
 
-    // Permite acesso a função do Context
-    const { definirUsuario } = useContext(AuthContext);
+  // Permite acesso a função do Context
+  const { definirUsuario } = useContext(AuthContext);
 
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [erros, setErros] = useState({ email: '', senha: '' });
-    const [erroLogin, setErroLogin] = useState('');
-    
-    async function enviarLogin() {
-        const resultado = validarLogin(email, senha);
-        setErros(resultado);
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erros, setErros] = useState({ email: '', senha: '' });
+  const [erroLogin, setErroLogin] = useState('');
 
-        // compara se o valor do erro retornado é diferente de ''
-        const possuiErros = Object.values(resultado)
-            .some(erro => erro !== '');
-
-        if (possuiErros) {
-            return;
-        }
-        
-        try{
-            const db = await conectarBanco();
-            
-            const usuario = {
-                email: email,
-                senha: senha
-            }
-
-            const usuario_logado = await realizarLogin(db, usuario)    
-            if(usuario_logado) {
-                definirUsuario({
-                    id: usuario_logado.id,
-                    nome: usuario_logado.nome,
-                    email: usuario_logado.email
-                });
-
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Principal' }]
-                })
-            }
-
-        } catch (error) {
-            setErroLogin(error.message);
-        }
+  async function enviarLogin() {
+    const resultado = validarLogin(email, senha);
+    setErros(resultado);
 
     // compara se o valor do erro retornado é diferente de ''
-    const possuiErros = Object.values(resultado).some((erro) => erro !== "");
+    const possuiErros = Object.values(resultado)
+      .some(erro => erro !== '');
 
     if (possuiErros) {
       return;
@@ -73,25 +34,27 @@ export default function TelaLogin({ navigation }) {
 
       const usuario = {
         email: email,
-        senha: senha,
-      };
+        senha: senha
+      }
 
-      const usuario_logado = await realizarLogin(db, usuario);
+      const usuario_logado = await realizarLogin(db, usuario)
       if (usuario_logado) {
-        const { senha, ...dadosUsuario } = usuario_logado;
-
-        setUsuario(dadosUsuario);
+        definirUsuario({
+          id: usuario_logado.id,
+          nome: usuario_logado.nome,
+          email: usuario_logado.email
+        });
 
         navigation.reset({
           index: 0,
-          routes: [{ name: "Principal" }],
-        });
+          routes: [{ name: 'Principal' }]
+        })
       }
+
     } catch (error) {
       setErroLogin(error.message);
     }
   }
-
   return (
     <View style={styles.container}>
       {/* HEADER */}
@@ -210,3 +173,4 @@ const styles = StyleSheet.create({
     marginTop: 10, // -10, porque o input da um marginBottom de 10
   },
 });
+

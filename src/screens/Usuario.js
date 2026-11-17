@@ -1,19 +1,18 @@
-
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { useUsuario } from '../context/UsuarioContext';
 
 export default function Usuario({ navigation }) {
-
-    const { usuario, setUsuario } = useUsuario();
-
+    
+    const { usuario, logout } = useContext(AuthContext);
     
     const iniciais = usuario?.nome
         ? usuario.nome.trim().split(/\s+/).slice(0, 2).map(nome => nome[0]).join('').toUpperCase()
         : 'U';
 
     function sair() {
-        setUsuario(null);
+        logout();
 
         navigation.getParent()?.reset({
             index: 0,
