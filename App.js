@@ -12,15 +12,17 @@ export default function App() {
   return (
     <AuthProvider>
       <NavigationContainer>
-        <Stack.Navigator 
-          initialRouteName='Inicial' screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          initialRouteName="Inicial"
+          screenOptions={{ headerShown: false }}
+        >
           {/* Telas de autenticação */}
-          <Stack.Screen name='Inicial' component={TelaInicial} />
-          <Stack.Screen name='Login' component={TelaLogin} />
-          <Stack.Screen name='Cadastro' component={TelaCadastro} />
+          <Stack.Screen name="Inicial" component={TelaInicial} />
+          <Stack.Screen name="Login" component={TelaLogin} />
+          <Stack.Screen name="Cadastro" component={TelaCadastro} />
 
           {/* Screen após o LOGIN */}
-          <Stack.Screen name='Principal' component={TabNavigator} />
+          <Stack.Screen name="Principal" component={TabNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

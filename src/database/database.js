@@ -1,13 +1,12 @@
 import * as SQLite from 'expo-sqlite';
 
-
 export async function conectarBanco() {
-    const db = await SQLite.openDatabaseAsync('pitada.db');
+  const db = await SQLite.openDatabaseAsync('pitada.db');
 
-    await db.execAsync('PRAGMA foreign_keys = ON;');
+  await db.execAsync('PRAGMA foreign_keys = ON;');
 
-    /*  CRIA TABELA DE USUARIOS */
-    await db.execAsync(`
+  /*  CRIA TABELA DE USUARIOS */
+  await db.execAsync(`
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome VARCHAR(100) NOT NULL,
@@ -16,7 +15,7 @@ export async function conectarBanco() {
         );    
     `);
 
-    await db.execAsync(`
+  await db.execAsync(`
         CREATE TABLE IF NOT EXISTS receitas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             usuario_id INTEGER NOT NULL,
@@ -33,16 +32,21 @@ export async function conectarBanco() {
         );
     `);
 
-    const colunas = await db.getAllAsync('PRAGMA table_info(receitas)');
-    const nomesDasColunas = new Set(colunas.map(coluna => coluna.name));
+  const colunas = await db.getAllAsync('PRAGMA table_info(receitas)');
+  const nomesDasColunas = new Set(colunas.map((coluna) => coluna.name));
 
-    if (!nomesDasColunas.has('tempo_preparo')) {
-        await db.execAsync('ALTER TABLE receitas ADD COLUMN tempo_preparo INTEGER NOT NULL DEFAULT 0;');
-    }
+  if (!nomesDasColunas.has('tempo_preparo')) {
+    await db.execAsync(
+      `ALTER TABLE receitas
+       ADD COLUMN tempo_preparo INTEGER NOT NULL DEFAULT 0;`,
+    );
+  }
 
-    if (!nomesDasColunas.has('favorita')) {
-        await db.execAsync('ALTER TABLE receitas ADD COLUMN favorita INTEGER NOT NULL DEFAULT 0;');
-    }
+  if (!nomesDasColunas.has('favorita')) {
+    await db.execAsync(
+      'ALTER TABLE receitas ADD COLUMN favorita INTEGER NOT NULL DEFAULT 0;',
+    );
+  }
 
-    return db;
+  return db;
 }

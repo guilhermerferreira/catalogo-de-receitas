@@ -3,28 +3,30 @@ import { createContext, useState } from 'react';
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-    const [usuario, setUsuario] = useState(null);
+  const [usuario, setUsuario] = useState(null);
 
-    function definirUsuario(usuarioLogado) {
-        setUsuario(usuarioLogado);
-    }
+  function definirUsuario(usuarioLogado) {
+    setUsuario(usuarioLogado);
+  }
 
-    function logout() {
-        setUsuario(null);
-    }
+  function logout() {
+    setUsuario(null);
+  }
 
-    function atualizarUsuario(dados) {
-        setUsuario(usuarioAtual => ({ ...usuarioAtual, ...dados }));
-    }
+  function atualizarUsuario(dados) {
+    setUsuario((usuarioAtual) => ({ ...usuarioAtual, ...dados }));
+  }
 
-    return (
-        <AuthContext.Provider value={{
-            usuario,
-            definirUsuario,
-            logout,
-            atualizarUsuario
-        }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider
+      value={{
+        usuario,
+        definirUsuario,
+        logout,
+        atualizarUsuario,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
