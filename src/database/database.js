@@ -1,8 +1,10 @@
 import * as SQLite from 'expo-sqlite';
 
 export async function conectarBanco() {
+  // Abre ou cria o arquivo local do SQLite no aparelho.
   const db = await SQLite.openDatabaseAsync('pitada.db');
 
+  // Habilita o relacionamento entre usuários e receitas.
   await db.execAsync('PRAGMA foreign_keys = ON;');
 
   /*  CRIA TABELA DE USUARIOS */
@@ -32,10 +34,12 @@ export async function conectarBanco() {
         );
     `);
 
+  // Verifica a estrutura existente antes de executar migrações.
   const colunas = await db.getAllAsync('PRAGMA table_info(receitas)');
   const nomesDasColunas = new Set(colunas.map((coluna) => coluna.name));
 
   if (!nomesDasColunas.has('tempo_preparo')) {
+    // Preserva bancos antigos adicionando somente a coluna ausente.
     await db.execAsync(
       `ALTER TABLE receitas
        ADD COLUMN tempo_preparo INTEGER NOT NULL DEFAULT 0;`,

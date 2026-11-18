@@ -15,6 +15,7 @@ export default function ListaReceitas() {
   const [categoria, setCategoria] = useState('Todos');
 
   useFocusEffect(
+    // Mantém a lista sincronizada após cadastro, edição ou exclusão.
     useCallback(() => {
       async function carregar() {
         const db = await conectarBanco();

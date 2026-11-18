@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const CHAVE_FILTRO = '@pitada:ultimo-filtro';
 
 export async function salvarUltimoFiltro(categoria) {
+  // AsyncStorage mantém a preferência mesmo após fechar o aplicativo.
   await AsyncStorage.setItem(CHAVE_FILTRO, categoria);
 }
 

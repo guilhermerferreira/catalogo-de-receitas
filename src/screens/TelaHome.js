@@ -31,6 +31,7 @@ export default function TelaHome() {
   const [categoria, setCategoria] = useState('Todos');
 
   const carregar = useCallback(async () => {
+    // Recupera o filtro salvo e todas as receitas do catálogo.
     const db = await conectarBanco();
     const filtro = await carregarUltimoFiltro();
     setCategoria(CATEGORIAS.includes(filtro) ? filtro : 'Todos');
@@ -38,12 +39,14 @@ export default function TelaHome() {
   }, []);
 
   useFocusEffect(
+    // Recarrega ao voltar para a tela após criar ou editar uma receita.
     useCallback(() => {
       carregar();
     }, [carregar]),
   );
 
   const filtradas = useMemo(
+    // Evita recalcular a busca enquanto os dados não mudarem.
     () =>
       receitas.filter((receita) => {
         const correspondeNome = receita.nome
@@ -62,6 +65,7 @@ export default function TelaHome() {
   }
 
   async function favoritar(receita) {
+    // Atualiza o SQLite e depois reflete o novo estado na interface.
     const favorita = await alternarFavorita(await conectarBanco(), receita);
     setReceitas((lista) =>
       lista.map((item) =>

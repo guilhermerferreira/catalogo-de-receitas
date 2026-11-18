@@ -10,6 +10,7 @@ import {
 } from '../database/ReceitaRepository';
 
 function serializar(receita) {
+  // SQLite armazena as listas como texto JSON.
   return {
     ...receita,
     ingredientes: JSON.stringify(receita.ingredientes),
@@ -20,6 +21,7 @@ function serializar(receita) {
 export function formatarReceita(receita) {
   if (!receita) return null;
 
+  // Converte o JSON do banco novamente em arrays usados pelas telas.
   const converterLista = (valor) => {
     try {
       const lista = JSON.parse(valor || '[]');
@@ -39,6 +41,7 @@ export function formatarReceita(receita) {
 }
 
 function montarReceita(dados) {
+  // Centraliza a criação do objeto de domínio Receita.
   return new Receita(
     dados.id ?? null,
     dados.usuario_id,
@@ -81,6 +84,7 @@ export async function alternarFavorita(db, receita) {
 }
 
 export async function excluirReceita(db, receita, usuario) {
+  // Impede que um usuário apague a receita criada por outra pessoa.
   if (!receita || receita.usuario_id !== usuario?.id) {
     throw new Error('Você só pode excluir suas próprias receitas.');
   }

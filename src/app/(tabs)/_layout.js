@@ -3,6 +3,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import { StyleSheet, View } from 'react-native';
 
 function icone(ativo, inativo) {
+  // Retorna um componente de ícone adaptado ao estado da aba.
   return function IconeDaAba({ focused, color, size }) {
     return (
       <Ionicons name={focused ? ativo : inativo} color={color} size={size} />
@@ -11,6 +12,7 @@ function icone(ativo, inativo) {
 }
 
 function BotaoPublicar({ focused }) {
+  // O botão central troca as cores quando a aba está selecionada.
   return (
     <View style={[styles.botaoPublicar, focused && styles.botaoPublicarAtivo]}>
       <Ionicons name="add" color={focused ? '#0C343E' : '#FFBE31'} size={32} />
@@ -19,6 +21,7 @@ function BotaoPublicar({ focused }) {
 }
 
 export default function TabLayout() {
+  // Tabs mantém as áreas principais acessíveis pela barra inferior.
   return (
     <Tabs
       initialRouteName="index"

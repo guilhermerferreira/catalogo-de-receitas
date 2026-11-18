@@ -19,12 +19,14 @@ import {
 } from '../services/ReceitaService';
 
 export default function DetalhesReceita() {
+  // O id vem da rota dinâmica receita/[id].
   const { id } = useLocalSearchParams();
   const receitaId = Array.isArray(id) ? id[0] : id;
   const { usuario } = useContext(AuthContext);
   const [receita, setReceita] = useState(null);
 
   useFocusEffect(
+    // Atualiza os detalhes quando o usuário retorna da edição.
     useCallback(() => {
       async function carregar() {
         setReceita(await buscarReceita(await conectarBanco(), receitaId));
@@ -39,6 +41,7 @@ export default function DetalhesReceita() {
   }
 
   function confirmarExclusao() {
+    // A exclusão exige confirmação porque não pode ser desfeita.
     Alert.alert('Excluir receita?', 'Esta ação não poderá ser desfeita.', [
       { text: 'Cancelar', style: 'cancel' },
       {

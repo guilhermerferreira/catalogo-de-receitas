@@ -29,6 +29,7 @@ export default function ListaReceitasFavoritas() {
   );
 
   const secoes = useMemo(
+    // SectionList recebe uma seção separada para cada categoria.
     () =>
       ORDEM.map((categoria) => ({
         title: categoria,

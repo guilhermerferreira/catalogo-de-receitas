@@ -1,3 +1,4 @@
+// Repository contém somente comandos SQL e não conhece componentes visuais.
 export async function criar(db, receita) {
   return db.runAsync(
     `INSERT INTO receitas

@@ -7,6 +7,7 @@ export default function ReceitaCard({
   onFavorite,
   estilo = 'normal',
 }) {
+  // O componente recebe dados e ações por props para ser reutilizável.
   return (
     <Pressable
       accessibilityRole="button"

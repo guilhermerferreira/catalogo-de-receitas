@@ -12,10 +12,6 @@ export async function buscarEmail(db, email) {
   ]);
 }
 
-export async function listarTodos(db) {
-  return await db.getAllAsync('SELECT * FROM usuarios');
-}
-
 export async function atualizarPerfil(db, usuario) {
   return db.runAsync(
     'UPDATE usuarios SET nome = ?, email = ? WHERE id = ?',

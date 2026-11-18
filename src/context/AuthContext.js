@@ -2,10 +2,12 @@ import { createContext, useState } from 'react';
 
 export const AuthContext = createContext(null);
 
+// Provider compartilha o usuário autenticado com todas as telas.
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
 
   function definirUsuario(usuarioLogado) {
+    // Chamado depois que o login é validado no SQLite.
     setUsuario(usuarioLogado);
   }
 

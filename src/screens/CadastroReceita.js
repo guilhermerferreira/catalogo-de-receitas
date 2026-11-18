@@ -27,6 +27,7 @@ import Label from '../components/Label';
 const CATEGORIAS = ['Doce', 'Salgado', 'Salada', 'Bebida'];
 
 export default function CadastroReceita() {
+  // A presença do id transforma o formulário de criação em edição.
   const { id } = useLocalSearchParams();
   const receitaId = Array.isArray(id) ? id[0] : id;
   const editando = Boolean(receitaId);
@@ -42,6 +43,7 @@ export default function CadastroReceita() {
   const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
+    // No modo de edição, carrega a receita e preenche os campos.
     if (!receitaId) return;
     async function carregar() {
       const receita = await buscarReceita(await conectarBanco(), receitaId);
@@ -94,6 +96,7 @@ export default function CadastroReceita() {
       ingredientes,
       modoDePreparo,
     };
+    // A gravação só continua quando não há mensagens de validação.
     const novosErros = validarReceita(dados);
     setErros(novosErros);
     if (Object.keys(novosErros).length || !usuario) return;
@@ -102,6 +105,7 @@ export default function CadastroReceita() {
       setSalvando(true);
       const db = await conectarBanco();
       if (editando) {
+        // O mesmo formulário atende CREATE e UPDATE.
         await atualizarReceita(db, dados);
       } else {
         await criarReceita(db, dados);

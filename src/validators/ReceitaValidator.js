@@ -5,6 +5,7 @@ export function validarReceita({
   ingredientes,
   modoDePreparo,
 }) {
+  // Cada propriedade adicionada representa uma mensagem exibida na tela.
   const erros = {};
 
   if (!nome.trim()) erros.nome = 'Informe o nome da receita.';

@@ -4,6 +4,7 @@ import { Text, TextInput, StyleSheet } from 'react-native';
  * @param {import('react-native').TextInputProps} props
  */
 export default function Input({ style, error, ...props }) {
+  // ...props repassa value, onChangeText, placeholder e outras opções.
   return (
     <>
       <TextInput style={[styles.input, style]} {...props} />
