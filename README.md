@@ -1,14 +1,13 @@
 # PITADA - Catálogo de Receitas
 
-O PITADA é um aplicativo móvel acadêmico para descobrir, cadastrar, organizar e compartilhar receitas. O projeto foi desenvolvido pelo Grupo 2 com React Native e Expo, seguindo a organização e os recursos trabalhados em aula.
+O PITADA é um aplicativo móvel acadêmico para descobrir, cadastrar, organizar e compartilhar receitas. O projeto foi desenvolvido com React Native e Expo, seguindo a organização e os recursos trabalhados em aula.
 
 ## Integrantes
 
-- [Preencher nome do integrante]
-- [Preencher nome do integrante]
-- [Preencher nome do integrante]
-
-Os nomes ficaram como campos de preenchimento porque não há uma lista confirmada de integrantes no repositório.
+- [Guilherme Rodrigues ferreira]
+- [Pedro Gabriel Oba Classe]
+- [Gabriel Tomiura Ishizawa]
+- [Isabela Dias Ferreira]
 
 ## Objetivo
 
@@ -83,14 +82,48 @@ O AsyncStorage não substitui o banco. Ele guarda apenas uma preferência simple
 
 ## Capturas de tela
 
-Adicionar aqui capturas reais feitas no dispositivo ou emulador antes da entrega:
-
-- [ ] Tela inicial e login
-- [ ] Catálogo e filtros
-- [ ] Detalhes da receita
-- [ ] Cadastro ou edição
-- [ ] Favoritos agrupados
-- [ ] Perfil
+<table>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/tela-inicial.png" width="260" alt="Tela inicial do PITADA"><br>
+      <strong>Tela inicial</strong>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/login.png" width="260" alt="Tela de login"><br>
+      <strong>Login</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/cadastro-usuario.png" width="260" alt="Tela de cadastro de usuário"><br>
+      <strong>Cadastro de usuário</strong>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/catalogo-receitas.png" width="260" alt="Catálogo de receitas"><br>
+      <strong>Catálogo e favoritos</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/filtro-categoria.png" width="260" alt="Catálogo filtrado por categoria"><br>
+      <strong>Filtro por categoria</strong>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/detalhes-receita.png" width="260" alt="Detalhes de uma receita"><br>
+      <strong>Detalhes da receita</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/nova-receita.png" width="260" alt="Formulário para publicar receita"><br>
+      <strong>Publicar receita</strong>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/perfil.png" width="260" alt="Tela de perfil do usuário"><br>
+      <strong>Perfil</strong>
+    </td>
+  </tr>
+</table>
 
 ## Observação de segurança
 
