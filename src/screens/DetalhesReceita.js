@@ -1,6 +1,7 @@
 import { useCallback, useContext, useState } from 'react';
 import {
   Alert,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -17,6 +18,7 @@ import {
   buscarReceita,
   excluirReceita,
 } from '../services/ReceitaService';
+import { obterImagemReceita } from '../utils/receitaImagens';
 
 export default function DetalhesReceita({ navigation, route }) {
   // O id vem da rota dinâmica receita/[id].
@@ -116,7 +118,15 @@ export default function DetalhesReceita({ navigation, route }) {
           </Pressable>
         </View>
         <View style={styles.ilustracao}>
-          <Ionicons name="restaurant-outline" size={72} color="#0C343E" />
+          {obterImagemReceita(receita.imagem) ? (
+            <Image
+              source={obterImagemReceita(receita.imagem)}
+              style={styles.imagem}
+              resizeMode="cover"
+            />
+          ) : (
+            <Ionicons name="restaurant-outline" size={72} color="#0C343E" />
+          )}
         </View>
         <Text style={styles.titulo}>{receita.nome}</Text>
         <View style={styles.meta}>
@@ -193,7 +203,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 12,
+    overflow: 'hidden',
   },
+  imagem: { width: '100%', height: '100%' },
   titulo: { fontSize: 27, fontWeight: 'bold', color: '#0C343E', marginTop: 20 },
   meta: { flexDirection: 'row', gap: 12, marginTop: 10 },
   metaTexto: {

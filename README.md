@@ -7,7 +7,7 @@ O PITADA é um aplicativo móvel acadêmico para descobrir, cadastrar, organizar
 - [Guilherme Rodrigues ferreira]
 - [Pedro Gabriel Oba Classe]
 - [Gabriel Tomiura Ishizawa]
-- [Isabela Dias Ferreira]
+- [Isabela Almeida Dias]
 
 ## Objetivo
 

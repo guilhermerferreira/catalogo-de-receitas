@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { obterImagemReceita } from '../utils/receitaImagens';
 
 export default function ReceitaCard({
   receita,
@@ -7,6 +8,7 @@ export default function ReceitaCard({
   onFavorite,
   estilo = 'normal',
 }) {
+  const imagem = obterImagemReceita(receita?.imagem);
   // O componente recebe dados e ações por props para ser reutilizável.
   return (
     <Pressable
@@ -15,7 +17,11 @@ export default function ReceitaCard({
       style={[styles.card, estilo === 'destaque' && styles.cardDestaque]}
     >
       <View style={styles.ilustracao}>
-        <Ionicons name="restaurant-outline" size={42} color="#0C343E" />
+        {imagem ? (
+          <Image source={imagem} style={styles.imagem} resizeMode="cover" />
+        ) : (
+          <Ionicons name="restaurant-outline" size={42} color="#0C343E" />
+        )}
         <Pressable
           accessibilityLabel={
             receita?.favorita
@@ -59,6 +65,7 @@ const styles = StyleSheet.create({
   },
   cardDestaque: { width: '100%', height: 230 },
   ilustracao: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  imagem: { width: '100%', height: '100%' },
   coracao: {
     position: 'absolute',
     right: 10,
