@@ -1,317 +1,152 @@
-import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View , Platform } from "react-native";
-import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { criarReceita } from "../services/ReceitaService";
-import { conectarBanco } from "../database/database";
-import Input from "../components/Input";
-import Label from "../components/Label";
-import Ionicons from "@react-native-vector-icons/ionicons";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useContext, useEffect, useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthContext } from '../context/AuthContext';
+import { conectarBanco } from '../database/database';
+import { atualizarReceita, buscarReceita, criarReceita } from '../services/ReceitaService';
+import { validarReceita } from '../validators/ReceitaValidator';
+import Input from '../components/Input';
+import Label from '../components/Label';
 
+const CATEGORIAS = ['Doce', 'Salgado', 'Salada', 'Bebida'];
 
 export default function CadastroReceita() {
-
+    const { id } = useLocalSearchParams();
+    const receitaId = Array.isArray(id) ? id[0] : id;
+    const editando = Boolean(receitaId);
     const { usuario } = useContext(AuthContext);
-    const categorias = ['Doce', 'Salgado', 'Salada', 'Bebida'];
-    const [categoriaSelecionada, setCategoriaSelecionada] = useState('');
-
     const [nome, setNome] = useState('');
+    const [categoria, setCategoria] = useState('');
+    const [tempoPreparo, setTempoPreparo] = useState('');
     const [ingredienteAtual, setIngredienteAtual] = useState('');
     const [ingredientes, setIngredientes] = useState([]);
     const [preparoAtual, setPreparoAtual] = useState('');
     const [modoDePreparo, setModoDePreparo] = useState([]);
+    const [erros, setErros] = useState({});
+    const [salvando, setSalvando] = useState(false);
 
-    function adicionarIngrediente() {
-        const ingrediente = ingredienteAtual.trim();
-
-        if (!ingrediente) {
-            return;
+    useEffect(() => {
+        if (!receitaId) return;
+        async function carregar() {
+            const receita = await buscarReceita(await conectarBanco(), receitaId);
+            if (!receita || receita.usuario_id !== usuario?.id) {
+                Alert.alert('Receita não encontrada', 'Você só pode editar suas próprias receitas.', [{ text: 'Voltar', onPress: () => router.back() }]);
+                return;
+            }
+            setNome(receita.nome);
+            setCategoria(receita.categoria);
+            setTempoPreparo(String(receita.tempoPreparo));
+            setIngredientes(receita.ingredientes);
+            setModoDePreparo(receita.modoDePreparo);
         }
+        carregar();
+    }, [receitaId, usuario?.id]);
 
-        setIngredientes(listaAtual => [...listaAtual, ingrediente]);
-        setIngredienteAtual('');
+    function adicionar(valor, definirValor, definirLista) {
+        const item = valor.trim();
+        if (!item) return;
+        definirLista(lista => [...lista, item]);
+        definirValor('');
     }
 
-    function removerIngrediente(indice) {
-        setIngredientes(listaAtual => 
-            listaAtual.filter((_, index) => index !== indice)
-        )
+    function remover(indice, definirLista) {
+        definirLista(lista => lista.filter((_, index) => index !== indice));
     }
 
-    function adicionarModoDePreparo() {
-        const preparo = preparoAtual.trim();
-
-        if (!preparo) {
-            return;
-        }
-
-        setModoDePreparo(listaAtual => [...listaAtual, preparo]);
-        setPreparoAtual('');
-    }
-
-    function removerModoDePreaparo(indice){
-        setModoDePreparo(listaAtual =>
-            listaAtual.filter((_, index) => index !== indice)
-        );
-    }
-
-    async function publicarReceita() {
-        if(!usuario) {
-            return;
-        }
-        
-        const receita = {
-            nome: nome.trim(),
-            usuario_id: usuario.id,
-            categoria: categoriaSelecionada,
-            ingredientes: ingredientes,
-            modoDePreparo: modoDePreparo
-        }
+    async function salvar() {
+        const dados = { id: Number(receitaId), usuario_id: usuario?.id, nome, categoria, tempoPreparo, ingredientes, modoDePreparo };
+        const novosErros = validarReceita(dados);
+        setErros(novosErros);
+        if (Object.keys(novosErros).length || !usuario) return;
 
         try {
+            setSalvando(true);
             const db = await conectarBanco();
-            await criarReceita(db, receita);
-            console.log('Receita cadastrada com sucesso!');
-
-        } catch (error) {
-            console.log('Erro ao cadastrar receita: ', error)
+            if (editando) await atualizarReceita(db, dados);
+            else await criarReceita(db, dados);
+            Alert.alert(editando ? 'Receita atualizada!' : 'Receita publicada!', 'Os dados foram salvos com sucesso.', [
+                { text: 'OK', onPress: () => router.replace('/(tabs)/minhas') },
+            ]);
+        } catch {
+            Alert.alert('Não foi possível salvar', 'Tente novamente em instantes.');
+        } finally {
+            setSalvando(false);
         }
-
     }
 
     return (
-        <KeyboardAvoidingView 
-            style={{ flex: 1 }} 
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-        >
-            <SafeAreaView style={styles.container}>
-                <ScrollView 
-                    contentContainerStyle={styles.conteudo} // conteudo
-                    keyboardShouldPersistTaps="handled"
-                >
+        <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <SafeAreaView style={styles.container} edges={['top']}>
+                <ScrollView contentContainerStyle={styles.conteudo} keyboardShouldPersistTaps="handled">
+                    <Text style={styles.titulo}>{editando ? 'Editar receita' : 'Nova receita'}</Text>
+                    <Text style={styles.subtitulo}>{editando ? 'Atualize os dados da sua receita' : 'Compartilhe uma receita com a comunidade'}</Text>
 
-                    {/* HEADER */}
-                    <View style={styles.header}>
-                        <Text style={styles.titulo}> Nova receita </Text>
-                        <Text style={styles.subtitulo}> Compartilhe uma receita com a comunidade </Text>
-                    </View>
+                    <View style={styles.formulario}>
+                        <Label texto="NOME DA RECEITA" />
+                        <Input value={nome} onChangeText={setNome} placeholder="Ex.: Bolo de cenoura" error={erros.nome} />
 
-                    {/* FORMULÁRIO */}
-                    <View style={styles.formContainer}>
-
-                        {/* AQUI VAI SER ONDE O USUARIO COLOCA A FOTO */}
-                        <View>
-
+                        <Label texto="CATEGORIA" />
+                        <View style={styles.categorias}>
+                            {CATEGORIAS.map(item => <Pressable key={item} onPress={() => setCategoria(item)} style={[styles.categoria, categoria === item && styles.ativa]}><Text style={categoria === item && styles.textoAtivo}>{item}</Text></Pressable>)}
                         </View>
+                        {erros.categoria ? <Text style={styles.erro}>{erros.categoria}</Text> : null}
 
-                        {/* NOME DA RECEITA */}
-                        <Label texto={'NOME DA RECEITA'}/>
-                        <Input 
-                            value={nome}
-                            onChangeText={setNome}
-                            placeholder="Ex: Bolo de cenoura"
+                        <Label texto="TEMPO DE PREPARO (MIN)" />
+                        <Input value={tempoPreparo} onChangeText={setTempoPreparo} keyboardType="number-pad" placeholder="Ex.: 30" error={erros.tempoPreparo} />
+
+                        <ListaEditavel
+                            titulo="INGREDIENTES"
+                            valor={ingredienteAtual}
+                            setValor={setIngredienteAtual}
+                            itens={ingredientes}
+                            aoAdicionar={() => adicionar(ingredienteAtual, setIngredienteAtual, setIngredientes)}
+                            aoRemover={indice => remover(indice, setIngredientes)}
+                            placeholder="Ex.: 500 g de farinha"
+                            erro={erros.ingredientes}
+                        />
+                        <ListaEditavel
+                            titulo="MODO DE PREPARO"
+                            valor={preparoAtual}
+                            setValor={setPreparoAtual}
+                            itens={modoDePreparo}
+                            aoAdicionar={() => adicionar(preparoAtual, setPreparoAtual, setModoDePreparo)}
+                            aoRemover={indice => remover(indice, setModoDePreparo)}
+                            placeholder="Descreva uma etapa..."
+                            erro={erros.modoDePreparo}
                         />
 
-                        {/* CATEGORIAS */}
-                        <Label texto={'CATEGORIA'}/>
-                        <View style={styles.opcoes}>
-                            {/* BOTÃO CATEGORIA */}
-                            {categorias.map((categoria, index ) => (
-                                <Pressable 
-                                    key={index} 
-                                    onPress={() => setCategoriaSelecionada(categoria)}
-                                    style={[styles.categoria, 
-                                        categoriaSelecionada === categoria && styles.categoriaSelecionada
-                                    ]}
-                                > 
-                                    {/* TEXTO BOTÃO CATEGORIA  */}
-                                    <Text 
-                                        style={[styles.textoCategoria,
-                                            categoriaSelecionada === categoria && styles.textoCategoriaSelecionada
-                                        ]}
-                                    >
-                                        {categoria}
-                                    </Text>
-                                </Pressable>
-                            ))}
-                        </View>
-
-                        {/* INGREDIENTES */}
-                        <View style={styles.secao}>
-
-                            <Label texto={'INGREDIENTES'}/>
-                            <View style={styles.linhaAdicionar}>
-                                <Input 
-                                    style={{ width: '85%'}}
-                                    value={ingredienteAtual}
-                                    onChangeText={setIngredienteAtual}
-                                    placeholder="Liste ingredientes e quantidades..."
-                                />
-                                {/* BOTAO ADICIONAR */}
-                                <Pressable style={styles.botaoAdicionar} onPress={adicionarIngrediente}>
-                                    <Text style={styles.textoBotao}> + </Text>
-                                </Pressable>
-                            </View>
-                            
-                            {/* LISTA DE INGREDIENTES */}
-                            {ingredientes.map((item, index) => (
-                                <View style={styles.itemLista} key={index}> 
-                                    <Text style={styles.textoItem}> { item } </Text>
-                                    {/* BOTÃO REMOVER */}
-                                    <Pressable style={styles.iconeRemover} onPress={() => removerIngrediente(index)}>
-                                        <Ionicons name={'trash'} color={'red'} size={18} />
-                                    </Pressable>
-                                </View>
-                            ))}
-                        </View>
-                        
-                        {/* MODO DE PREPARO */}
-                        <View style={styles.secao}>
-                            <Label texto={'MODO DE PREPARO'}/>
-
-                            <View style={styles.linhaAdicionar}>
-                                <Input 
-                                    style={{ width: '85%'}}
-                                    value={preparoAtual}
-                                    onChangeText={setPreparoAtual}
-                                    placeholder="Descreva o passo a passo da receita..."
-                                />
-                                {/* BOTAO ADICIONAR */}
-                                <Pressable style={styles.botaoAdicionar} onPress={adicionarModoDePreparo}>
-                                    <Text style={styles.textoBotao}> + </Text>
-                                </Pressable>
-                            </View>
-
-                            {/* LISTA DO MODO DE PREPARO */}
-                            {modoDePreparo.map((item, index) => (
-                                <View style={styles.itemLista} key={index}> 
-                                    <Text style={styles.textoItem}> { item } </Text>
-                                    {/* BOTÃO REMOVER */}
-                                    <Pressable style={styles.iconeRemover} onPress={() => removerModoDePreaparo(index)}>
-                                        <Ionicons name={'trash'} color={'red'} size={18} />
-                                    </Pressable>
-                                </View>
-                            ))}
-                        </View>
-                        
-                        {/* BOTAO DE ENVIAR FORMULARIO */}
-                        <TouchableOpacity 
-                            style={styles.botaoPublicar} 
-                            activeOpacity={0.7}
-                            onPress={publicarReceita}
-                        >
-                            <Text style={styles.textoBotaoPublicar}>Publicar Receita</Text>
+                        <TouchableOpacity disabled={salvando} style={[styles.botao, salvando && styles.desabilitado]} onPress={salvar}>
+                            <Ionicons name="save-outline" size={20} color="#0C343E" />
+                            <Text style={styles.textoBotao}>{salvando ? 'Salvando...' : editando ? 'Salvar alterações' : 'Publicar receita'}</Text>
                         </TouchableOpacity>
-
-                    </View>      
+                    </View>
                 </ScrollView>
             </SafeAreaView>
         </KeyboardAvoidingView>
     );
 }
 
+function ListaEditavel({ titulo, valor, setValor, itens, aoAdicionar, aoRemover, placeholder, erro }) {
+    return <View style={styles.secao}>
+        <Label texto={titulo} />
+        <View style={styles.linhaAdicionar}>
+            <Input style={styles.inputLista} value={valor} onChangeText={setValor} placeholder={placeholder} onSubmitEditing={aoAdicionar} />
+            <Pressable accessibilityLabel={`Adicionar em ${titulo}`} style={styles.adicionar} onPress={aoAdicionar}><Ionicons name="add" size={25} color="#0C343E" /></Pressable>
+        </View>
+        {erro ? <Text style={styles.erro}>{erro}</Text> : null}
+        {itens.map((item, index) => <View style={styles.item} key={`${item}-${index}`}><Text style={styles.textoItem}>{item}</Text><Pressable onPress={() => aoRemover(index)}><Ionicons name="trash-outline" color="#B3261E" size={19} /></Pressable></View>)}
+    </View>;
+}
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFF6E7',
-    },
-    conteudo: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 24,
-        marginTop: 40
-    },
-    header: {
-        width: '100%',
-    },
-    titulo: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#0C343E'
-    },
-    subtitulo: {
-        fontSize: 11,
-        marginTop: 5,
-        color: '#0C343E'
-    },
-    formContainer: {
-        flex: 1,
-        width: '100%',
-        marginTop: 40
-    },
-    opcoes: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-    },
-    categoria: {
-        borderWidth: 1,
-        borderColor: '#E5E0D0',
-        backgroundColor: '#FFFBF3',
-        padding: 8,
-        paddingHorizontal: 16,
-        borderRadius: 18
-    },
-    categoriaSelecionada: {
-        backgroundColor: '#0C343E',
-        borderWidth: 0
-    },
-    textoCategoriaSelecionada: {
-        color: '#ffff'
-    },
-    secao: {
-        width: '100%'
-    },
-    linhaAdicionar: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16
-    },
-    botaoAdicionar: {
-        backgroundColor: '#FFBE31',
-        width: 35,
-        height: 35,
-        borderRadius: 10,
-        marginBottom: 10,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    textoBotao: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        color: '#0C343E',
-    },
-    itemLista: {
-        display: 'flex',
-        backgroundColor: '#E5E0D0',
-        width: '100%',
-        flexDirection: 'row',
-        padding: 6,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderRadius: 16,
-        marginBottom: 5
-    },
-    textoItem: {
-        color: '#0C343E',
-        marginLeft: 10
-    },
-    iconeRemover: {
-        marginRight: 3
-    },
-    botaoPublicar: {
-        width: '100%',
-        padding: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 60,
-        borderRadius: 12,
-        backgroundColor: '#FFBE31'
-    },
-    textoBotaoPublicar: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#0C343E',
-    }
-})
+    flex: { flex: 1 }, container: { flex: 1, backgroundColor: '#FFF6E7' }, conteudo: { padding: 20, paddingBottom: 45 },
+    titulo: { fontSize: 25, fontWeight: 'bold', color: '#0C343E' }, subtitulo: { color: '#66767A', marginTop: 3 }, formulario: { marginTop: 26 },
+    categorias: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }, categoria: { borderWidth: 1, borderColor: '#E5E0D0', backgroundColor: '#FFFBF3', padding: 9, paddingHorizontal: 14, borderRadius: 18 },
+    ativa: { backgroundColor: '#0C343E' }, textoAtivo: { color: '#FFF' }, erro: { color: '#B3261E', fontSize: 12, marginBottom: 10 },
+    secao: { marginTop: 10 }, linhaAdicionar: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 }, inputLista: { flex: 1 },
+    adicionar: { width: 42, height: 42, borderRadius: 10, backgroundColor: '#FFBE31', justifyContent: 'center', alignItems: 'center' },
+    item: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#EEE5D5', padding: 10, borderRadius: 12, marginBottom: 6 }, textoItem: { flex: 1, color: '#0C343E' },
+    botao: { marginTop: 32, height: 52, borderRadius: 12, backgroundColor: '#FFBE31', flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center' }, textoBotao: { color: '#0C343E', fontSize: 16, fontWeight: 'bold' }, desabilitado: { opacity: 0.6 },
+});

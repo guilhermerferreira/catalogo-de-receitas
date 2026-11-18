@@ -27,7 +27,7 @@ export function validarCadastro(nome, email, senha, confirmaSenha) {
     if (!nome.trim()) {
         erros.nome = 'O campo nome deve ser preenchido';
     } else if (nome.length < 2) {
-        erros.nome('O nome deve conter pelo menos 2 caracteres.');
+        erros.nome = 'O nome deve conter pelo menos 2 caracteres.';
     }
 
     if (!email.trim()) {

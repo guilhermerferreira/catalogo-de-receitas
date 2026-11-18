@@ -3,8 +3,9 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
-export default function Usuario({ navigation }) {
+export default function Usuario() {
     
     const { usuario, logout } = useContext(AuthContext);
     
@@ -15,10 +16,7 @@ export default function Usuario({ navigation }) {
     function sair() {
         logout();
 
-        navigation.getParent()?.reset({
-            index: 0,
-            routes: [{ name: 'Login' }]
-        });
+        router.replace('/login');
     }
 
     return (
@@ -49,23 +47,23 @@ export default function Usuario({ navigation }) {
 
                 <View style={styles.opcoes}>
 
-                    <View style={styles.opcao}>
+                    <TouchableOpacity style={styles.opcao} onPress={() => router.push('/usuario/editar-perfil')}>
                         <Ionicons name="person-outline" size={20} color="#0C343E" />
                         <Text style={styles.textoOpcao}>Editar perfil</Text>
                         <Ionicons name="chevron-forward" size={20} color="#888" />
-                    </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.opcao}>
+                    <TouchableOpacity style={styles.opcao} onPress={() => router.push('/usuario/configuracoes')}>
                         <Ionicons name="settings-outline" size={20} color="#0C343E" />
                         <Text style={styles.textoOpcao}>Configurações</Text>
                         <Ionicons name="chevron-forward" size={20} color="#888" />
-                    </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.opcao}>
+                    <TouchableOpacity style={styles.opcao} onPress={() => router.push('/usuario/sobre')}>
                         <Ionicons name="information-circle-outline" size={20} color="#0C343E" />
                         <Text style={styles.textoOpcao}>Sobre o aplicativo</Text>
                         <Ionicons name="chevron-forward" size={20} color="#888" />
-                    </View>
+                    </TouchableOpacity>
 
                 </View>
 

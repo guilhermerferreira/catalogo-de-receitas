@@ -18,3 +18,12 @@ export async function listarTodos(db) {
         'SELECT * FROM usuarios'
     );
 }
+
+export async function atualizarPerfil(db, usuario) {
+    return db.runAsync(
+        'UPDATE usuarios SET nome = ?, email = ? WHERE id = ?',
+        usuario.nome,
+        usuario.email,
+        usuario.id
+    );
+}

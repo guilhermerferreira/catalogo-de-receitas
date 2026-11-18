@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { KeyboardAvoidingView, ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useState, useContext } from "react";
 import { validarLogin } from "../validators/AuthValidator";
 import { conectarBanco } from "../database/database";
@@ -7,8 +7,9 @@ import { AuthContext } from "../context/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../components/Input";
 import Label from "../components/Label";
+import { router } from 'expo-router';
 
-export default function TelaLogin({ navigation }) {
+export default function TelaLogin() {
 
   // Permite acesso a função do Context
   const { definirUsuario } = useContext(AuthContext);
@@ -46,10 +47,7 @@ export default function TelaLogin({ navigation }) {
           email: usuario_logado.email
         });
 
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Principal' }]
-        })
+        router.replace('/(tabs)');
       }
 
     } catch (error) {
@@ -57,8 +55,17 @@ export default function TelaLogin({ navigation }) {
     }
   }
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.conteudo}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding"
+    >
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
+          <View style={styles.conteudo}>
         {/* HEADER */}
         <View style={styles.header}>
           <Text style={styles.titulo}>Faça seu login</Text>
@@ -107,14 +114,16 @@ export default function TelaLogin({ navigation }) {
             Não tem uma conta?
             <Text
               style={styles.link}
-              onPress={() => navigation.navigate("Cadastro")}
+              onPress={() => router.push('/cadastro')}
             >
               Crie sua conta!
             </Text>
           </Text>
         </View>
-      </View>
-    </SafeAreaView>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -124,11 +133,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF6E7",
   },
   conteudo: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "space-between",
     padding: 24,
-    marginTop: 20
+    paddingTop: 20,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   header: {
     width: "100%",
@@ -147,7 +159,7 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
     width: "100%",
-    marginTop: 150,
+    marginTop: 70,
   },
   botao: {
     padding: 12,
@@ -164,6 +176,7 @@ const styles = StyleSheet.create({
   footer: {
     fontSize: 13,
     alignItems: "center",
+    marginTop: 40,
   },
   textoFooter: {
     color: "#0C343E",

@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { KeyboardAvoidingView, ScrollView, View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import { validarCadastro } from "../validators/AuthValidator";
 import { conectarBanco } from "../database/database"
@@ -6,8 +6,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { cadastrarUsuario } from "../services/AuthService";
 import Label from "../components/Label";
 import Input from "../components/Input";
+import { router } from 'expo-router';
 
-export default function TelaCadastro({navigation}) {
+export default function TelaCadastro() {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -38,7 +39,7 @@ export default function TelaCadastro({navigation}) {
             await cadastrarUsuario(db, novoUsuario);
 
             // navega para a pagina de login
-            navigation.navigate('Login'); 
+            router.replace('/login');
         } catch (error) {
             // recebe varios erros, e altera apenas o valor do 'email' 
             setErros({
@@ -49,8 +50,17 @@ export default function TelaCadastro({navigation}) {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.conteudo}>
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior="padding"
+        >
+            <SafeAreaView style={styles.container}>
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                    keyboardDismissMode="on-drag"
+                >
+                    <View style={styles.conteudo}>
 
                 {/* HEADER */}
                 <View style={styles.header}>
@@ -114,12 +124,14 @@ export default function TelaCadastro({navigation}) {
                 {/* FOOTER */}
                 <View style={styles.footer}>
                     <Text style={styles.textoFooter}>Já tem conta?
-                        <Text style={styles.link} onPress={() => navigation.navigate('Login')}> Entrar</Text>
+                        <Text style={styles.link} onPress={() => router.replace('/login')}> Entrar</Text>
                     </Text>
                 </View>
                 
-            </View>
-        </SafeAreaView>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -129,11 +141,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF6E7',
     },
     conteudo: {
-        flex: 1,
+        flexGrow: 1,
         padding: 24,
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 20
+        paddingTop: 20,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
     header: {
         width: '100%',
@@ -152,7 +167,7 @@ const styles = StyleSheet.create({
     formContainer: {
         flex: 1,
         width: '100%',
-        marginTop: 80
+        marginTop: 40
     },
     botao: {
         alignItems: 'center',
@@ -168,6 +183,7 @@ const styles = StyleSheet.create({
     footer: {
         fontSize: 13,
         alignItems: 'center',
+        marginTop: 30,
     },
     textoFooter: {
         color: '#0C343E',

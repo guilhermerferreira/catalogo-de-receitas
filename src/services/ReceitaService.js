@@ -1,70 +1,80 @@
-import Receita from "../models/Receita";
-import { criar, listar } from "../database/ReceitaRepository";
+import Receita from '../models/Receita';
+import {
+    atualizar,
+    buscarPorId,
+    criar,
+    definirFavorita,
+    listar,
+    listarCatalogo,
+} from '../database/ReceitaRepository';
 
-export async function criarReceita(db, receita) {
-
-    if(!receita) {
-        return;
-    }
-
-    const novaReceita = new Receita(
-        null, // id - autoincrement
-        receita.usuario_id,
-        receita.nome,
-        receita.categoria,
-        receita.ingredientes,
-        receita.modoDePreparo
-    );  
-
-    const receitaParaSalvar = {
-        ...novaReceita,
-        // CONVERTE O ARRAY EM STRING PARA INSERIR NO BANCO
-        ingredientes: JSON.stringify(novaReceita.ingredientes),
-        modoDePreparo: JSON.stringify(novaReceita.modoDePreparo),
-    }
-
-    await criar(db, receitaParaSalvar);
+function serializar(receita) {
+    return {
+        ...receita,
+        ingredientes: JSON.stringify(receita.ingredientes),
+        modoDePreparo: JSON.stringify(receita.modoDePreparo),
+    };
 }
 
-function formatarReceita(receita) {
-    
-    if (!receita) {
-        return;
-    }
-    
-    let listaIngredientes = [];
-    let listaModoDePreparo = [];
-    
-    try {
+export function formatarReceita(receita) {
+    if (!receita) return null;
 
-        // CONVERTE OS INGREDIENTES E MODO DE PREPARO PARA LISTAS
-        listaIngredientes = JSON.parse(receita.ingredientes);
-        listaModoDePreparo = JSON.parse(receita.modo_de_preparo);
-    } catch (error) {
-        console.log('Erro aqui', error);
-    }
+    const converterLista = valor => {
+        try {
+            const lista = JSON.parse(valor || '[]');
+            return Array.isArray(lista) ? lista : [];
+        } catch {
+            return [];
+        }
+    };
 
-    return ({
+    return {
         ...receita,
-        ingredientes: listaIngredientes,
-        modoDePreparo: listaModoDePreparo
-    });
+        tempoPreparo: Number(receita.tempo_preparo) || 0,
+        ingredientes: converterLista(receita.ingredientes),
+        modoDePreparo: converterLista(receita.modo_de_preparo),
+        favorita: Boolean(receita.favorita),
+    };
+}
+
+function montarReceita(dados) {
+    return new Receita(
+        dados.id ?? null,
+        dados.usuario_id,
+        dados.nome.trim(),
+        dados.categoria,
+        Number(dados.tempoPreparo),
+        dados.ingredientes,
+        dados.modoDePreparo,
+        Boolean(dados.favorita)
+    );
+}
+
+export async function criarReceita(db, dados) {
+    return criar(db, serializar(montarReceita(dados)));
+}
+
+export async function atualizarReceita(db, dados) {
+    return atualizar(db, serializar(montarReceita(dados)));
 }
 
 export async function listarReceitas(db, usuario) {
+    if (!usuario) return [];
+    const receitas = await listar(db, usuario.id);
+    return receitas.map(formatarReceita);
+}
 
-    if(!usuario) {
-        console.log('Nao chegou usario no Service')
-        return [];
-    }
+export async function listarCatalogoReceitas(db) {
+    const receitas = await listarCatalogo(db);
+    return receitas.map(formatarReceita);
+}
 
-    try {
-        const receitasBrutas = await listar(db, usuario?.id);
-        const receitasFormatadas = receitasBrutas.map((receita) => formatarReceita(receita));
+export async function buscarReceita(db, id) {
+    return formatarReceita(await buscarPorId(db, Number(id)));
+}
 
-        return receitasFormatadas;
-    } catch (error) {
-        console.log('ERRO no service: ', error.message);
-        return [];
-    }
+export async function alternarFavorita(db, receita) {
+    const novoEstado = !receita.favorita;
+    await definirFavorita(db, receita.id, novoEstado);
+    return novoEstado;
 }
