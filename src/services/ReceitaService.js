@@ -4,6 +4,7 @@ import {
     buscarPorId,
     criar,
     definirFavorita,
+    excluir,
     listar,
     listarCatalogo,
 } from '../database/ReceitaRepository';
@@ -77,4 +78,12 @@ export async function alternarFavorita(db, receita) {
     const novoEstado = !receita.favorita;
     await definirFavorita(db, receita.id, novoEstado);
     return novoEstado;
+}
+
+export async function excluirReceita(db, receita, usuario) {
+    if (!receita || receita.usuario_id !== usuario?.id) {
+        throw new Error('Você só pode excluir suas próprias receitas.');
+    }
+    const resultado = await excluir(db, receita.id, usuario.id);
+    if (!resultado.changes) throw new Error('A receita não foi encontrada.');
 }

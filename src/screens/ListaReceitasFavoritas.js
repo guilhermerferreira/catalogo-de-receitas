@@ -5,7 +5,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ReceitaCard from '../components/ReceitaCard';
 import { conectarBanco } from '../database/database';
-import { listarCatalogoReceitas } from '../services/ReceitaService';
+import { alternarFavorita, listarCatalogoReceitas } from '../services/ReceitaService';
 
 const ORDEM = ['Doce', 'Salgado', 'Salada', 'Bebida'];
 
@@ -26,6 +26,11 @@ export default function ListaReceitasFavoritas() {
         data: receitas.filter(item => item.categoria === categoria && item.nome.toLowerCase().includes(busca.trim().toLowerCase())),
     })).filter(secao => secao.data.length), [busca, receitas]);
 
+    async function removerFavorita(receita) {
+        await alternarFavorita(await conectarBanco(), receita);
+        setReceitas(lista => lista.filter(item => item.id !== receita.id));
+    }
+
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             <SectionList
@@ -43,7 +48,7 @@ export default function ListaReceitasFavoritas() {
                 renderSectionHeader={({ section }) => <Text style={styles.categoria}>{section.title}</Text>}
                 renderItem={({ item }) => (
                     <View style={styles.cardContainer}>
-                        <ReceitaCard receita={item} estilo="destaque" onPress={() => router.push({ pathname: '/receita/[id]', params: { id: item.id } })} />
+                        <ReceitaCard receita={item} estilo="destaque" onFavorite={removerFavorita} onPress={() => router.push({ pathname: '/receita/[id]', params: { id: item.id } })} />
                     </View>
                 )}
                 ListEmptyComponent={<Text style={styles.vazio}>Nenhuma receita favorita encontrada.</Text>}

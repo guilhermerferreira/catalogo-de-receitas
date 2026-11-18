@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
 import ReceitaCard from '../components/ReceitaCard';
 import { conectarBanco } from '../database/database';
-import { listarReceitas } from '../services/ReceitaService';
+import { alternarFavorita, listarReceitas } from '../services/ReceitaService';
 
 const CATEGORIAS = ['Todos', 'Doce', 'Salgado', 'Salada', 'Bebida'];
 
@@ -27,6 +27,11 @@ export default function ListaReceitas() {
         [categoria, receitas]
     );
 
+    async function favoritar(receita) {
+        const favorita = await alternarFavorita(await conectarBanco(), receita);
+        setReceitas(lista => lista.map(item => item.id === receita.id ? { ...item, favorita } : item));
+    }
+
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             <FlatList
@@ -46,7 +51,7 @@ export default function ListaReceitas() {
                         ))}
                     </View>
                 </>}
-                renderItem={({ item }) => <ReceitaCard receita={item} onPress={() => router.push({ pathname: '/receita/[id]', params: { id: item.id } })} />}
+                renderItem={({ item }) => <ReceitaCard receita={item} onFavorite={favoritar} onPress={() => router.push({ pathname: '/receita/[id]', params: { id: item.id } })} />}
                 ListEmptyComponent={<Text style={styles.vazio}>Você ainda não publicou receitas nesta categoria.</Text>}
             />
         </SafeAreaView>

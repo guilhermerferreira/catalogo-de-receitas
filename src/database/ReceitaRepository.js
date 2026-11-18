@@ -46,3 +46,11 @@ export async function buscarPorId(db, id) {
 export async function definirFavorita(db, id, favorita) {
     return db.runAsync('UPDATE receitas SET favorita = ? WHERE id = ?', favorita ? 1 : 0, id);
 }
+
+export async function excluir(db, id, usuarioId) {
+    return db.runAsync(
+        'DELETE FROM receitas WHERE id = ? AND usuario_id = ?',
+        id,
+        usuarioId
+    );
+}
