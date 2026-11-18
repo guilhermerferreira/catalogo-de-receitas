@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
 import ReceitaCard from '../components/ReceitaCard';
@@ -9,7 +9,7 @@ import { alternarFavorita, listarReceitas } from '../services/ReceitaService';
 
 const CATEGORIAS = ['Todos', 'Doce', 'Salgado', 'Salada', 'Bebida'];
 
-export default function ListaReceitas() {
+export default function ListaReceitas({ navigation }) {
   const { usuario } = useContext(AuthContext);
   const [receitas, setReceitas] = useState([]);
   const [categoria, setCategoria] = useState('Todos');
@@ -34,7 +34,11 @@ export default function ListaReceitas() {
   );
 
   async function favoritar(receita) {
-    const favorita = await alternarFavorita(await conectarBanco(), receita);
+    const favorita = await alternarFavorita(
+      await conectarBanco(),
+      receita,
+      usuario,
+    );
     setReceitas((lista) =>
       lista.map((item) =>
         item.id === receita.id ? { ...item, favorita } : item,
@@ -74,9 +78,8 @@ export default function ListaReceitas() {
             receita={item}
             onFavorite={favoritar}
             onPress={() =>
-              router.push({
-                pathname: '/receita/[id]',
-                params: { id: item.id },
+              navigation.getParent()?.navigate('DetalhesReceita', {
+                id: item.id,
               })
             }
           />

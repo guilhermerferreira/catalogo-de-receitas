@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
 import { conectarBanco } from '../database/database';
@@ -8,7 +7,7 @@ import { editarUsuario } from '../services/AuthService';
 import Input from '../components/Input';
 import Label from '../components/Label';
 
-export default function EditarPerfil() {
+export default function EditarPerfil({ navigation }) {
   const { usuario, atualizarUsuario } = useContext(AuthContext);
   const [nome, setNome] = useState(usuario?.nome || '');
   const [email, setEmail] = useState(usuario?.email || '');
@@ -28,7 +27,7 @@ export default function EditarPerfil() {
       await editarUsuario(await conectarBanco(), dados);
       atualizarUsuario(dados);
       Alert.alert('Perfil atualizado', 'Seus dados foram salvos.', [
-        { text: 'OK', onPress: () => router.back() },
+        { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
       setErro(error.message);

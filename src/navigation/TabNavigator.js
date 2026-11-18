@@ -1,9 +1,15 @@
-import { Tabs } from 'expo-router';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { StyleSheet, View } from 'react-native';
+import TelaHome from '../screens/TelaHome';
+import ListaReceitasFavoritas from '../screens/ListaReceitasFavoritas';
+import CadastroReceita from '../screens/CadastroReceita';
+import ListaReceitas from '../screens/ListaReceitas';
+import Usuario from '../screens/Usuario';
+
+const Tab = createBottomTabNavigator();
 
 function icone(ativo, inativo) {
-  // Retorna um componente de ícone adaptado ao estado da aba.
   return function IconeDaAba({ focused, color, size }) {
     return (
       <Ionicons name={focused ? ativo : inativo} color={color} size={size} />
@@ -12,7 +18,6 @@ function icone(ativo, inativo) {
 }
 
 function BotaoPublicar({ focused }) {
-  // O botão central troca as cores quando a aba está selecionada.
   return (
     <View style={[styles.botaoPublicar, focused && styles.botaoPublicarAtivo]}>
       <Ionicons name="add" color={focused ? '#0C343E' : '#FFBE31'} size={32} />
@@ -20,11 +25,10 @@ function BotaoPublicar({ focused }) {
   );
 }
 
-export default function TabLayout() {
-  // Tabs mantém as áreas principais acessíveis pela barra inferior.
+export default function TabNavigator() {
   return (
-    <Tabs
-      initialRouteName="index"
+    <Tab.Navigator
+      initialRouteName="Inicio"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#0C343E',
@@ -37,58 +41,47 @@ export default function TabLayout() {
         },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Início',
-          tabBarIcon: icone('home', 'home-outline'),
-        }}
+      <Tab.Screen
+        name="Inicio"
+        component={TelaHome}
+        options={{ title: 'Início', tabBarIcon: icone('home', 'home-outline') }}
       />
-      <Tabs.Screen
-        name="favoritos"
-        options={{
-          title: 'Favoritos',
-          tabBarIcon: icone('heart', 'heart-outline'),
-        }}
+      <Tab.Screen
+        name="Favoritos"
+        component={ListaReceitasFavoritas}
+        options={{ tabBarIcon: icone('heart', 'heart-outline') }}
       />
-      <Tabs.Screen
-        name="publicar"
+      <Tab.Screen
+        name="PublicarReceita"
+        component={CadastroReceita}
         options={{
-          title: 'Publicar',
+          title: 'Publicar receita',
           tabBarLabel: () => null,
           tabBarIcon: BotaoPublicar,
           tabBarIconStyle: styles.iconePublicar,
           tabBarItemStyle: styles.itemPublicar,
         }}
       />
-      <Tabs.Screen
-        name="minhas"
+      <Tab.Screen
+        name="MinhasReceitas"
+        component={ListaReceitas}
         options={{
-          title: 'Minhas',
+          title: 'Minhas receitas',
           tabBarIcon: icone('reader', 'reader-outline'),
         }}
       />
-      <Tabs.Screen
-        name="usuario"
-        options={{
-          title: 'Perfil',
-          tabBarIcon: icone('person', 'person-outline'),
-        }}
+      <Tab.Screen
+        name="Perfil"
+        component={Usuario}
+        options={{ tabBarIcon: icone('person', 'person-outline') }}
       />
-    </Tabs>
+    </Tab.Navigator>
   );
 }
 
 const styles = StyleSheet.create({
-  itemPublicar: {
-    overflow: 'visible',
-  },
-  iconePublicar: {
-    width: 70,
-    height: 70,
-    marginTop: -22,
-    overflow: 'visible',
-  },
+  itemPublicar: { overflow: 'visible' },
+  iconePublicar: { width: 70, height: 70, marginTop: -22, overflow: 'visible' },
   botaoPublicar: {
     width: 70,
     height: 70,
@@ -99,7 +92,5 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: '#FFF6E7',
   },
-  botaoPublicarAtivo: {
-    backgroundColor: '#FFBE31',
-  },
+  botaoPublicarAtivo: { backgroundColor: '#FFBE31' },
 });

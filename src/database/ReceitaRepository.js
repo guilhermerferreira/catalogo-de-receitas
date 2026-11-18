@@ -43,23 +43,60 @@ export async function atualizar(db, receita) {
 
 export async function listar(db, usuarioId) {
   return db.getAllAsync(
-    'SELECT * FROM receitas WHERE usuario_id = ? ORDER BY nome COLLATE NOCASE',
+    `SELECT receitas.*,
+            EXISTS(
+              SELECT 1 FROM favoritos
+               WHERE favoritos.receita_id = receitas.id
+                 AND favoritos.usuario_id = ?
+            ) AS favorita
+       FROM receitas
+      WHERE receitas.usuario_id = ?
+      ORDER BY receitas.nome COLLATE NOCASE`,
+    usuarioId,
     usuarioId,
   );
 }
 
-export async function listarCatalogo(db) {
-  return db.getAllAsync('SELECT * FROM receitas ORDER BY nome COLLATE NOCASE');
+export async function listarCatalogo(db, usuarioId) {
+  return db.getAllAsync(
+    `SELECT receitas.*,
+            EXISTS(
+              SELECT 1 FROM favoritos
+               WHERE favoritos.receita_id = receitas.id
+                 AND favoritos.usuario_id = ?
+            ) AS favorita
+       FROM receitas
+      ORDER BY receitas.nome COLLATE NOCASE`,
+    usuarioId,
+  );
 }
 
-export async function buscarPorId(db, id) {
-  return db.getFirstAsync('SELECT * FROM receitas WHERE id = ?', id);
+export async function buscarPorId(db, id, usuarioId) {
+  return db.getFirstAsync(
+    `SELECT receitas.*,
+            EXISTS(
+              SELECT 1 FROM favoritos
+               WHERE favoritos.receita_id = receitas.id
+                 AND favoritos.usuario_id = ?
+            ) AS favorita
+       FROM receitas
+      WHERE receitas.id = ?`,
+    usuarioId,
+    id,
+  );
 }
 
-export async function definirFavorita(db, id, favorita) {
+export async function definirFavorita(db, id, usuarioId, favorita) {
+  if (favorita) {
+    return db.runAsync(
+      'INSERT OR IGNORE INTO favoritos (usuario_id, receita_id) VALUES (?, ?)',
+      usuarioId,
+      id,
+    );
+  }
   return db.runAsync(
-    'UPDATE receitas SET favorita = ? WHERE id = ?',
-    favorita ? 1 : 0,
+    'DELETE FROM favoritos WHERE usuario_id = ? AND receita_id = ?',
+    usuarioId,
     id,
   );
 }

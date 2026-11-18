@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
@@ -18,26 +18,45 @@ import {
   excluirReceita,
 } from '../services/ReceitaService';
 
-export default function DetalhesReceita() {
+export default function DetalhesReceita({ navigation, route }) {
   // O id vem da rota dinâmica receita/[id].
-  const { id } = useLocalSearchParams();
-  const receitaId = Array.isArray(id) ? id[0] : id;
+  const receitaId = route.params?.id;
   const { usuario } = useContext(AuthContext);
   const [receita, setReceita] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
 
   useFocusEffect(
     // Atualiza os detalhes quando o usuário retorna da edição.
     useCallback(() => {
       async function carregar() {
-        setReceita(await buscarReceita(await conectarBanco(), receitaId));
+        try {
+          setCarregando(true);
+          setErro('');
+          setReceita(
+            await buscarReceita(await conectarBanco(), receitaId, usuario),
+          );
+        } catch {
+          setErro('Não foi possível consultar esta receita.');
+        } finally {
+          setCarregando(false);
+        }
       }
       carregar();
-    }, [receitaId]),
+    }, [receitaId, usuario]),
   );
 
   async function favoritar() {
-    const favorita = await alternarFavorita(await conectarBanco(), receita);
-    setReceita((atual) => ({ ...atual, favorita }));
+    try {
+      const favorita = await alternarFavorita(
+        await conectarBanco(),
+        receita,
+        usuario,
+      );
+      setReceita((atual) => ({ ...atual, favorita }));
+    } catch (error) {
+      Alert.alert('Não foi possível favoritar', error.message);
+    }
   }
 
   function confirmarExclusao() {
@@ -50,7 +69,7 @@ export default function DetalhesReceita() {
         onPress: async () => {
           try {
             await excluirReceita(await conectarBanco(), receita, usuario);
-            router.replace('/(tabs)/minhas');
+            navigation.navigate('Principal', { screen: 'MinhasReceitas' });
           } catch (error) {
             Alert.alert('Não foi possível excluir', error.message);
           }
@@ -59,10 +78,25 @@ export default function DetalhesReceita() {
     ]);
   }
 
-  if (!receita)
+  if (carregando)
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.carregando}>Carregando receita...</Text>
+      </SafeAreaView>
+    );
+
+  if (erro || !receita)
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.carregando}>
+          {erro || 'Receita não encontrada.'}
+        </Text>
+        <Pressable
+          onPress={() => navigation.goBack()}
+          style={styles.voltarErro}
+        >
+          <Text style={styles.textoVoltarErro}>Voltar</Text>
+        </Pressable>
       </SafeAreaView>
     );
 
@@ -70,7 +104,7 @@ export default function DetalhesReceita() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.conteudo}>
         <View style={styles.acoesTopo}>
-          <Pressable onPress={() => router.back()} style={styles.icone}>
+          <Pressable onPress={() => navigation.goBack()} style={styles.icone}>
             <Ionicons name="arrow-back" size={24} color="#0C343E" />
           </Pressable>
           <Pressable onPress={favoritar} style={styles.icone}>
@@ -113,10 +147,7 @@ export default function DetalhesReceita() {
             <Pressable
               style={styles.editar}
               onPress={() =>
-                router.push({
-                  pathname: '/receita/editar/[id]',
-                  params: { id: receita.id },
-                })
+                navigation.navigate('EditarReceita', { id: receita.id })
               }
             >
               <Ionicons name="create-outline" size={20} color="#FFF" />
@@ -137,6 +168,15 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF6E7' },
   conteudo: { padding: 20, paddingBottom: 45 },
   carregando: { margin: 24, color: '#0C343E' },
+  voltarErro: {
+    marginHorizontal: 24,
+    height: 46,
+    borderRadius: 12,
+    backgroundColor: '#FFBE31',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textoVoltarErro: { color: '#0C343E', fontWeight: 'bold' },
   acoesTopo: { flexDirection: 'row', justifyContent: 'space-between' },
   icone: {
     width: 42,

@@ -34,6 +34,22 @@ export async function conectarBanco() {
         );
     `);
 
+  await db.execAsync(`
+        CREATE TABLE IF NOT EXISTS favoritos (
+            usuario_id INTEGER NOT NULL,
+            receita_id INTEGER NOT NULL,
+            PRIMARY KEY (usuario_id, receita_id),
+            FOREIGN KEY(usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            FOREIGN KEY(receita_id) REFERENCES receitas(id) ON DELETE CASCADE
+        );
+    `);
+
+  await db.execAsync(`
+        CREATE TABLE IF NOT EXISTS migracoes (
+            nome TEXT PRIMARY KEY
+        );
+    `);
+
   // Verifica a estrutura existente antes de executar migrações.
   const colunas = await db.getAllAsync('PRAGMA table_info(receitas)');
   const nomesDasColunas = new Set(colunas.map((coluna) => coluna.name));
@@ -50,6 +66,28 @@ export async function conectarBanco() {
     await db.execAsync(
       'ALTER TABLE receitas ADD COLUMN favorita INTEGER NOT NULL DEFAULT 0;',
     );
+  }
+
+  const migracaoFavoritos = await db.getFirstAsync(
+    'SELECT nome FROM migracoes WHERE nome = ?',
+    'favoritos_por_usuario',
+  );
+
+  if (!migracaoFavoritos) {
+    // Preserva uma única vez os favoritos antigos e passa a separá-los por usuário.
+    await db.withTransactionAsync(async () => {
+      await db.runAsync(
+        `INSERT OR IGNORE INTO favoritos (usuario_id, receita_id)
+         SELECT usuarios.id, receitas.id
+           FROM usuarios
+           CROSS JOIN receitas
+          WHERE receitas.favorita = 1`,
+      );
+      await db.runAsync(
+        'INSERT INTO migracoes (nome) VALUES (?)',
+        'favoritos_por_usuario',
+      );
+    });
   }
 
   return db;

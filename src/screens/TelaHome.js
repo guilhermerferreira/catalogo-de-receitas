@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
@@ -24,7 +24,7 @@ import {
 
 const CATEGORIAS = ['Todos', 'Doce', 'Salgado', 'Salada', 'Bebida'];
 
-export default function TelaHome() {
+export default function TelaHome({ navigation }) {
   const { usuario } = useContext(AuthContext);
   const [receitas, setReceitas] = useState([]);
   const [busca, setBusca] = useState('');
@@ -35,8 +35,8 @@ export default function TelaHome() {
     const db = await conectarBanco();
     const filtro = await carregarUltimoFiltro();
     setCategoria(CATEGORIAS.includes(filtro) ? filtro : 'Todos');
-    setReceitas(await listarCatalogoReceitas(db));
-  }, []);
+    setReceitas(await listarCatalogoReceitas(db, usuario));
+  }, [usuario]);
 
   useFocusEffect(
     // Recarrega ao voltar para a tela após criar ou editar uma receita.
@@ -66,7 +66,11 @@ export default function TelaHome() {
 
   async function favoritar(receita) {
     // Atualiza o SQLite e depois reflete o novo estado na interface.
-    const favorita = await alternarFavorita(await conectarBanco(), receita);
+    const favorita = await alternarFavorita(
+      await conectarBanco(),
+      receita,
+      usuario,
+    );
     setReceitas((lista) =>
       lista.map((item) =>
         item.id === receita.id ? { ...item, favorita } : item,
@@ -122,9 +126,8 @@ export default function TelaHome() {
             receita={item}
             onFavorite={favoritar}
             onPress={() =>
-              router.push({
-                pathname: '/receita/[id]',
-                params: { id: item.id },
+              navigation.getParent()?.navigate('DetalhesReceita', {
+                id: item.id,
               })
             }
           />

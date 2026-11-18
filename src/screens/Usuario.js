@@ -3,9 +3,8 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 
-export default function Usuario() {
+export default function Usuario({ navigation }) {
   const { usuario, logout } = useContext(AuthContext);
 
   const iniciais = usuario?.nome
@@ -21,7 +20,7 @@ export default function Usuario() {
   function sair() {
     logout();
 
-    router.replace('/login');
+    navigation.getParent()?.replace('Login');
   }
 
   return (
@@ -46,7 +45,7 @@ export default function Usuario() {
         <View style={styles.opcoes}>
           <TouchableOpacity
             style={styles.opcao}
-            onPress={() => router.push('/usuario/editar-perfil')}
+            onPress={() => navigation.getParent()?.navigate('EditarPerfil')}
           >
             <Ionicons name="person-outline" size={20} color="#0C343E" />
             <Text style={styles.textoOpcao}>Editar perfil</Text>
@@ -55,7 +54,7 @@ export default function Usuario() {
 
           <TouchableOpacity
             style={styles.opcao}
-            onPress={() => router.push('/usuario/configuracoes')}
+            onPress={() => navigation.getParent()?.navigate('Configuracoes')}
           >
             <Ionicons name="settings-outline" size={20} color="#0C343E" />
             <Text style={styles.textoOpcao}>Configurações</Text>
@@ -64,7 +63,7 @@ export default function Usuario() {
 
           <TouchableOpacity
             style={styles.opcao}
-            onPress={() => router.push('/usuario/sobre')}
+            onPress={() => navigation.getParent()?.navigate('Sobre')}
           >
             <Ionicons
               name="information-circle-outline"

@@ -68,18 +68,21 @@ export async function listarReceitas(db, usuario) {
   return receitas.map(formatarReceita);
 }
 
-export async function listarCatalogoReceitas(db) {
-  const receitas = await listarCatalogo(db);
+export async function listarCatalogoReceitas(db, usuario) {
+  if (!usuario) return [];
+  const receitas = await listarCatalogo(db, usuario.id);
   return receitas.map(formatarReceita);
 }
 
-export async function buscarReceita(db, id) {
-  return formatarReceita(await buscarPorId(db, Number(id)));
+export async function buscarReceita(db, id, usuario) {
+  if (!usuario) return null;
+  return formatarReceita(await buscarPorId(db, Number(id), usuario.id));
 }
 
-export async function alternarFavorita(db, receita) {
+export async function alternarFavorita(db, receita, usuario) {
+  if (!usuario) throw new Error('Faça login para favoritar uma receita.');
   const novoEstado = !receita.favorita;
-  await definirFavorita(db, receita.id, novoEstado);
+  await definirFavorita(db, receita.id, usuario.id, novoEstado);
   return novoEstado;
 }
 

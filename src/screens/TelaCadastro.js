@@ -13,9 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { cadastrarUsuario } from '../services/AuthService';
 import Label from '../components/Label';
 import Input from '../components/Input';
-import { router } from 'expo-router';
 
-export default function TelaCadastro() {
+export default function TelaCadastro({ navigation }) {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -50,7 +49,7 @@ export default function TelaCadastro() {
       await cadastrarUsuario(db, novoUsuario);
 
       // navega para a pagina de login
-      router.replace('/login');
+      navigation.replace('Login');
     } catch (error) {
       // recebe varios erros, e altera apenas o valor do 'email'
       setErros({
@@ -134,7 +133,7 @@ export default function TelaCadastro() {
                 Já tem conta?
                 <Text
                   style={styles.link}
-                  onPress={() => router.replace('/login')}
+                  onPress={() => navigation.replace('Login')}
                 >
                   {' '}
                   Entrar

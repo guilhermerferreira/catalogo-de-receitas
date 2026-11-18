@@ -14,9 +14,6 @@
     "web": {
       "favicon": "./assets/app-icon.png"
     },
-    "plugins": ["expo-sqlite", "expo-router"],
-    "experiments": {
-      "typedRoutes": true
-    }
+    "plugins": ["expo-sqlite"]
   }
 }

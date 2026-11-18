@@ -14,9 +14,8 @@ import { AuthContext } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Input from '../components/Input';
 import Label from '../components/Label';
-import { router } from 'expo-router';
 
-export default function TelaLogin() {
+export default function TelaLogin({ navigation }) {
   // Permite acesso a função do Context
   const { definirUsuario } = useContext(AuthContext);
 
@@ -52,7 +51,7 @@ export default function TelaLogin() {
           email: usuario_logado.email,
         });
 
-        router.replace('/(tabs)');
+        navigation.replace('Principal');
       }
     } catch (error) {
       setErroLogin(error.message);
@@ -117,7 +116,7 @@ export default function TelaLogin() {
                 Não tem uma conta?
                 <Text
                   style={styles.link}
-                  onPress={() => router.push('/cadastro')}
+                  onPress={() => navigation.navigate('Cadastro')}
                 >
                   Crie sua conta!
                 </Text>

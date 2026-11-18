@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
@@ -26,10 +25,9 @@ import Label from '../components/Label';
 
 const CATEGORIAS = ['Doce', 'Salgado', 'Salada', 'Bebida'];
 
-export default function CadastroReceita() {
+export default function CadastroReceita({ navigation, route }) {
   // A presença do id transforma o formulário de criação em edição.
-  const { id } = useLocalSearchParams();
-  const receitaId = Array.isArray(id) ? id[0] : id;
+  const receitaId = route.params?.id;
   const editando = Boolean(receitaId);
   const { usuario } = useContext(AuthContext);
   const [nome, setNome] = useState('');
@@ -46,12 +44,16 @@ export default function CadastroReceita() {
     // No modo de edição, carrega a receita e preenche os campos.
     if (!receitaId) return;
     async function carregar() {
-      const receita = await buscarReceita(await conectarBanco(), receitaId);
+      const receita = await buscarReceita(
+        await conectarBanco(),
+        receitaId,
+        usuario,
+      );
       if (!receita || receita.usuario_id !== usuario?.id) {
         Alert.alert(
           'Receita não encontrada',
           'Você só pode editar suas próprias receitas.',
-          [{ text: 'Voltar', onPress: () => router.back() }],
+          [{ text: 'Voltar', onPress: () => navigation.goBack() }],
         );
         return;
       }
@@ -62,7 +64,7 @@ export default function CadastroReceita() {
       setModoDePreparo(receita.modoDePreparo);
     }
     carregar();
-  }, [receitaId, usuario?.id]);
+  }, [navigation, receitaId, usuario]);
 
   function adicionar(valor, definirValor, definirLista) {
     const item = valor.trim();
@@ -114,7 +116,20 @@ export default function CadastroReceita() {
       Alert.alert(
         editando ? 'Receita atualizada!' : 'Receita publicada!',
         'Os dados foram salvos com sucesso.',
-        [{ text: 'OK', onPress: () => router.replace('/(tabs)/minhas') }],
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              if (editando) {
+                navigation.navigate('Principal', {
+                  screen: 'MinhasReceitas',
+                });
+              } else {
+                navigation.navigate('MinhasReceitas');
+              }
+            },
+          },
+        ],
       );
     } catch {
       Alert.alert('Não foi possível salvar', 'Tente novamente em instantes.');

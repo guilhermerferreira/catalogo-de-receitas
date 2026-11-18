@@ -1,8 +1,7 @@
 import { StyleSheet, View, Image, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 
-export default function TelaInicial() {
+export default function TelaInicial({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -33,7 +32,7 @@ export default function TelaInicial() {
           {/* BOTÃO */}
           <TouchableOpacity
             style={styles.botao}
-            onPress={() => router.push('/login')}
+            onPress={() => navigation.navigate('Login')}
             activeOpacity={0.7}
           >
             <Text style={styles.textoBotao}>Entrar</Text>
@@ -44,7 +43,10 @@ export default function TelaInicial() {
         <View style={styles.footer}>
           <Text style={styles.textoFooter}>
             Ainda não tem conta?
-            <Text style={styles.link} onPress={() => router.push('/cadastro')}>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('Cadastro')}
+            >
               {' '}
               Crie uma conta!{' '}
             </Text>

@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ReceitaCard from '../components/ReceitaCard';
+import { AuthContext } from '../context/AuthContext';
 import { conectarBanco } from '../database/database';
 import {
   alternarFavorita,
@@ -12,7 +13,8 @@ import {
 
 const ORDEM = ['Doce', 'Salgado', 'Salada', 'Bebida'];
 
-export default function ListaReceitasFavoritas() {
+export default function ListaReceitasFavoritas({ navigation }) {
+  const { usuario } = useContext(AuthContext);
   const [receitas, setReceitas] = useState([]);
   const [busca, setBusca] = useState('');
 
@@ -21,11 +23,13 @@ export default function ListaReceitasFavoritas() {
       async function carregar() {
         const db = await conectarBanco();
         setReceitas(
-          (await listarCatalogoReceitas(db)).filter((item) => item.favorita),
+          (await listarCatalogoReceitas(db, usuario)).filter(
+            (item) => item.favorita,
+          ),
         );
       }
       carregar();
-    }, []),
+    }, [usuario]),
   );
 
   const secoes = useMemo(
@@ -43,7 +47,7 @@ export default function ListaReceitasFavoritas() {
   );
 
   async function removerFavorita(receita) {
-    await alternarFavorita(await conectarBanco(), receita);
+    await alternarFavorita(await conectarBanco(), receita, usuario);
     setReceitas((lista) => lista.filter((item) => item.id !== receita.id));
   }
 
@@ -80,9 +84,8 @@ export default function ListaReceitasFavoritas() {
               estilo="destaque"
               onFavorite={removerFavorita}
               onPress={() =>
-                router.push({
-                  pathname: '/receita/[id]',
-                  params: { id: item.id },
+                navigation.getParent()?.navigate('DetalhesReceita', {
+                  id: item.id,
                 })
               }
             />
